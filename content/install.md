@@ -25,33 +25,29 @@ To use the `kohaku` command and to invoke the CLI from anywhere on your machine,
 
 From the `kohaku-cli` root directory, after building, just copy or symlink `bin/kohaku.mjs` somewhere on your `PATH` as `kohaku`.
 
-**Linux**
-
-```bash
-ln -sf "$(pwd)/bin/kohaku.mjs" ~/.local/bin/kohaku
-```
-
-**macOS**
+**Linux/MacOS**
 
 ```bash
 sudo ln -sf "$(pwd)/bin/kohaku.mjs" /usr/local/bin/kohaku
 ```
 
-Writing `kohaku` file to any directory on your PATH works.
-
-Check:
+Then check:
 
 ```bash
 kohaku --version
 ```
 
-> **Tip:** Add the target directory to your PATH in `~/.bashrc` or `~/.zshrc`
-> by just adding a line to the bottom of the file. E.g. add 
-> `~/.local/bin` to the path with:
-> ```bash
-> export PATH="$HOME/.local/bin:$PATH"
-> ```
-> Then either close and reopen your terminal, or run e.g. `source ~/.bashrc`
+Writing `kohaku` file to any directory on your PATH works. E.g. You could also write kohaku binary to `~/.local/bin` with:
+
+```bash
+ln -sf "$(pwd)/bin/kohaku.mjs" ~/.local/bin/kohaku
+```
+
+And just make sure you have/add this line to your `~/.bashrc` or `~/.zshrc`:
+
+```bash
+export PATH="$HOME/.local/bin:$PATH"
+```
 
 ## Update
 

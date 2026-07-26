@@ -11,30 +11,30 @@ Unshielding brings private Tornado balance back onto a public Ethereum address.
 ## Unshield to a fresh address
 
 ```bash
-kohaku unshield --protocol tornado --next --amount-formatted 1.0
+kohaku unshield --next --amount-formatted 1.0
 ```
 
 `--next` creates a brand-new public account in your wallet and pays it. Dry-run first (no `--broadcast`), then:
 
 ```bash
-kohaku unshield --protocol tornado --next --amount-formatted 1.0 --broadcast
+kohaku unshield --next --amount-formatted 1.0 --broadcast
 ```
 
 Or take everything available:
 
 ```bash
-kohaku unshield --protocol tornado --next --amount-max --broadcast
+kohaku unshield --next --amount-max --broadcast
 ```
 
 Amounts must still match Tornado note rules (ETH: multiples of 0.1).
 
-## Network metadata (important)
+## Network metadata
 
-Unshields are submitted through a paymaster / bundler path (Pimlico). That means the operator can see **your IP address and related request metadata** at withdrawal time, even though the on-chain deposit↔withdraw link is broken by Tornado.
+Unshields are submitted through a paymaster / bundler path (Pimlico).
 
-Practical mitigation: run the unshield step over **device-level Tor or a trustworthy VPN**, so your home/work IP is not sitting next to that UserOperation.
+To mitigate privacy concerns (pimlico could see your ip and network metadata) the CLI routes all calls to the pimlico endpoint through Tor Network by default.
 
-This does not replace waiting with funds shielded — it is an extra layer for the moment you withdraw.
+**If you disable Tor** on unsheilds (`--without-tor`) then **you are revealing your home IP to pimlico and linking oyur activity**
 
 ## After unshielding
 
@@ -46,6 +46,9 @@ You should see Tornado private balance down and the new public address funded (m
 
 From here you can:
 
-- [Transfer](./transfer.html) somewhere
-- Use [tail calls](./tail-calls.html) to do a swap/call in the same unshield
-- [Use a dapp](./dapps.html) via a clean browser wallet
+- Prefer doing the next step **in the same unshield** with [tail calls](./tail-calls.html) when you already have calldata (or a plain pay)
+- [Transfer](./transfer.html) somewhere if funds are already on the fresh address
+- [Transact raw](./transact-raw.html) for contract calls after unshielding
+- [Use a dapp in the browser](./dapps-with-browser.html) only as a last resort
+
+See [Using Dapps](./dapps.html) for the full preference order.

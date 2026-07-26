@@ -23,9 +23,11 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 - [Check Balances](./balances.html) — see your balances
 - [Shield Funds](./shield.html) — deposit into Tornado Cash
 - [Unshield Funds](./unshield.html) — withdraw to a fresh address
+- [Using Dapps](./dapps.html) — how to approach post-unshield interactions
 - [Unshield Tail Calls](./tail-calls.html) — unshield and call a contract in one step
-- [Using Dapps](./dapps.html) — use Ambire / a clean browser wallet
 - [Transfer Funds](./transfer.html) — send ETH or ERC-20s
+- [Transact Raw](./transact-raw.html) — submit dapp calldata from the CLI
+- [Dapps in Browser](./dapps-with-browser.html) — last resort: clean browser wallet
 - [Keeping activity delinked](./delinked.html) — habits that preserve privacy
 - [Dust Management](./dust.html) — leftovers smaller than a Tornado note
 - [Common Privacy Footguns](./footguns.html) — easy mistakes to avoid

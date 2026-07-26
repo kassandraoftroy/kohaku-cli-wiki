@@ -1,12 +1,14 @@
 ---
 title: Unshield Tail Calls
-order: 8
+order: 9
 summary: Unshield and call a contract in one step
 ---
 
 Sometimes you do not want the full unshield amount sitting idle on a fresh address. With `--tail-calls`, the Tornado payout lands and then **immediately** runs one or more calls in the same flow — pay someone, hit a router, etc. — while any leftover stays on your fresh account.
 
-(Note: currently this only works with Tornado Cash unshields, not the other Privacy Protocols)
+This is the preferred path when you can build calldata without a dapp frontend. See [Using Dapps](./dapps.html) for how it ranks against [transact-raw](./transact-raw.html) and the [browser](./dapps-with-browser.html) fallback.
+
+(Note: currently this only works with Tornado Cash unshields, not the other Privacy Protocols. Below we assume `DEFAULT_PRIVACY_PROTOCOL=tornado` or else add the `--protocol tornado` flag to commands.)
 
 ## Peek the destination first
 
@@ -34,9 +36,11 @@ You owe `0.15 ETH`, but Tornado notes are fixed sizes — so unshield a full not
 `0.15 ETH` = `150000000000000000` wei = `0x214e8348c4f0000`:
 
 ```bash
-kohaku unshield --protocol tornado --next --amount-formatted 0.2 \
+kohaku unshield --next --amount-formatted 0.2 \
   --tail-calls 0xRecipient:0x:0x214e8348c4f0000
 ```
+
+This is the better version of a post-unshield [transfer](./transfer.html) when you already know the recipient and amount.
 
 ## Example: pay someone in tokens
 
@@ -48,7 +52,7 @@ This example unshields `1000` USDC and immediately sends **250 USDC** to
 `0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48`:
 
 ```bash
-kohaku unshield --protocol tornado --next --token USDC --amount-formatted 1000 \
+kohaku unshield --next --token USDC --amount-formatted 1000 \
   --tail-calls 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48:0xa9059cbb000000000000000000000000abcdef0123456789012345678901234567890abc000000000000000000000000000000000000000000000000000000000ee6b280
 ```
 
@@ -61,7 +65,7 @@ selector `0xa9059cbb`, then the recipient, then the amount. No third
 If you have router calldata, same pattern — unshield a bit more than you spend:
 
 ```bash
-kohaku unshield --protocol tornado --next --amount-formatted 0.3 \
+kohaku unshield --next --amount-formatted 0.3 \
   --tail-calls 0x<swap-router>:0x<swap-payload>:0x<msg-value-in-hex>
 ```
 
@@ -74,4 +78,4 @@ Dry-run without `--broadcast` until the printed operation looks right, then broa
 - You can build the calldata (or it is a plain ETH send with empty `0x` data)
 - You want “fresh address appears mid-flow,” not “fresh address sits idle then separately sends”
 
-If you cannot get a clean payload, use the [browser wallet path](./dapps.html) instead.
+If you already unshielded, use [transfer](./transfer.html) for plain sends or [transact-raw](./transact-raw.html) for contract calls. If you cannot get a clean payload at all, use the [browser wallet path](./dapps-with-browser.html) instead.

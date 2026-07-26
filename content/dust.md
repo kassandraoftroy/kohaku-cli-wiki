@@ -1,6 +1,6 @@
 ---
 title: Dust Management
-order: 12
+order: 14
 summary: Deal with amounts too small for a Tornado note
 ---
 

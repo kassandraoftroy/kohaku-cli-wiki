@@ -1,24 +1,322 @@
 ---
 title: Commands
-order: 15
+order: 17
 section: appendix
 summary: Short command reference for kohaku-cli
 ---
 
-Quick map of the commands used in this guide. Flags evolve — when in doubt, run `kohaku <command> --help`.
+Quick map of every command. Flags evolve — when in doubt, run `kohaku help` or `kohaku <command> --help`.
 
 | Command | What it does |
 |---|---|
+| `help` | Show CLI help / list commands |
 | `create-wallet` | Create or `--import` an encrypted seed wallet |
 | `list-wallets` | List wallets on disk |
 | `next-fresh-address` | Derive the next public address (`--peek` to preview only) |
+| `export-private-key` | Print one account’s private key to stdout |
+| `reveal-seed-phrase` | Decrypt and print the wallet BIP-39 mnemonic |
 | `balances` | Public + private balances (`--verbose` for per-address) |
-| `shield` | Deposit from a public account into a privacy protocol |
-| `unshield` | Withdraw private balance to a public address (`--next`, `--tail-calls`) |
 | `transfer` | Send ETH or ERC-20 from a public account |
 | `transact-raw` | Submit raw calldata from a public account |
-| `export-private-key` | Print one account’s private key to stdout |
+| `shield` | Deposit from a public account into a privacy protocol |
+| `unshield` | Withdraw private balance to a public address (`--next`, `--tail-calls`) |
+| `see-decrypted-storage` | Debug: decrypt and print wallet storage JSON |
 
 Most mutating commands **dry-run by default**. Add `--broadcast` only when you intend to send.
 
-Common globals: `--wallet`, `--password`, `--rpc-url` / `RPC_URL`, `--dataDir`, `--non-interactive`.
+---
+
+## Commands list
+
+Global behavior:
+
+| Topic | Detail |
+|--------|--------|
+| **RPC** | `--rpc-url <url>` or env `RPC_URL` (required for most commands except `create-wallet` without `--import`, and `list-wallets`). |
+| **Default privacy protocol** | Env `DEFAULT_PRIVACY_PROTOCOL` (`tornado` \| `railgun` \| `privacy-pools`). When set, `shield` / `unshield` may omit `--protocol`, and `balances` includes that protocol by default. Examples below still pass `--protocol` / `--include` explicitly. |
+| **Data directory** | `--dataDir <path>` (default `~/.kohaku-cli`). |
+| **Networks** | Wallets created with `--testnet` expect Sepolia (`11155111`); otherwise mainnet (`1`). RPC chain ID must match the wallet. |
+| **`--non-interactive`** | Available on every command below. Skips prompts and spinners; prints **JSON** where applicable. Requires flags documented per command (`--password`, `--wallet`, amounts, `--from`, `--to` / `--next`, etc.). Use for CI, agents, and piping output. |
+| **`--password`** | Wallet unlock password. In non-interactive mode, required where the wallet is encrypted. Value can be a literal string or a path to a file containing the password. |
+
+---
+
+### `create-wallet <name>`
+
+Create a BIP-39 seed wallet encrypted on disk.
+
+| Option | Description |
+|--------|-------------|
+| `--testnet` | Tag wallet for Sepolia instead of mainnet. |
+| `--import` | Restore from mnemonic instead of generating a new one. |
+| `--long-seed` | Generate a 24-word (256-bit) mnemonic instead of the default 12-word (128-bit). Ignored with `--import`. |
+| `--rpc-url <url>` | Required with `--import` (or `RPC_URL`) to scan used addresses. |
+| `--mnemonic <phrase>` | Mnemonic (required with `--non-interactive --import`). |
+| `--password <password>` | Encryption password (required with `--non-interactive`). |
+| `--non-interactive` | No prompts; no mnemonic box on create. |
+| `--dataDir <path>` | Data root. |
+
+**Interactive:** encryption password (twice); for `--import`, masked mnemonic entry. New wallets display the mnemonic once in a warning box.
+
+**Examples:**
+
+```bash
+kohaku create-wallet myWallet --testnet
+kohaku create-wallet myWallet24 --testnet --long-seed
+kohaku create-wallet restored --testnet --import --rpc-url "$RPC_URL"
+```
+
+---
+
+### `list-wallets`
+
+List wallet names and network kind (mainnet / testnet).
+
+| Option | Description |
+|--------|-------------|
+| `--non-interactive` | Output `{"wallets":{"name":{"mainnet":true|false|null}}}` |
+| `--dataDir <path>` | Data root. |
+
+---
+
+### `next-fresh-address`
+
+Derive the next HD public account and print its address. By default the account is also persisted; use `--peek` to inspect it without writing.
+
+| Option | Description |
+|--------|-------------|
+| `--wallet <name>` | Wallet (prompt if omitted). |
+| `--password <password>` | Unlock password. |
+| `--peek` | Print the next fresh address without persisting it (e.g. to craft `--tail-calls` before `unshield --next`). |
+| `--non-interactive` | Requires `--wallet` and `--password`; prints address only. |
+| `--dataDir <path>` | Data root. |
+
+**Interactive:** wallet picker (if needed), wallet password.
+
+**Examples:**
+
+```bash
+kohaku next-fresh-address --wallet testWallet
+kohaku next-fresh-address --wallet testWallet --peek
+kohaku next-fresh-address --wallet testWallet --password "$WALLET_PW" --non-interactive
+```
+
+---
+
+### `export-private-key`
+
+Export the private key for one public account. The key is printed directly to stdout; handle it as sensitive material.
+
+| Option | Description |
+|--------|-------------|
+| `--wallet <name>` | Wallet (prompt if omitted). |
+| `--password <password>` | Unlock password. |
+| `--address <address>` | Export a persisted public account by address. |
+| `--index <index>` | Export by non-negative HD derivation index, even if the account has not been persisted yet. |
+| `--non-interactive` | Skip the reveal confirmation; requires `--wallet` and `--password`. |
+| `--dataDir <path>` | Data root. |
+
+Provide exactly one of `--address` or `--index`. Interactive mode confirms before revealing the key.
+
+**Examples:**
+
+```bash
+kohaku export-private-key --wallet testWallet --index 0
+kohaku export-private-key --wallet testWallet --address 0xYourAddress
+```
+
+---
+
+### `reveal-seed-phrase`
+
+Decrypt and print the wallet’s BIP-39 seed phrase. Interactive mode asks you to confirm **twice** before printing (both default to No).
+
+| Option | Description |
+|--------|-------------|
+| `--wallet <name>` | Wallet (prompt if omitted). |
+| `--password <password>` | Unlock password. |
+| `--non-interactive` | Skip both reveal confirmations; requires `--wallet` and `--password`. Prints the phrase only (no box). |
+| `--dataDir <path>` | Data root. |
+
+**Examples:**
+
+```bash
+kohaku reveal-seed-phrase --wallet testWallet
+```
+
+---
+
+### `balances`
+
+Show aggregated **public** balances (ETH + default ERC-20s for the chain, plus any private tokens discovered), and **private** balances for the protocols you select.
+
+By default, private balances are included only for `DEFAULT_PRIVACY_PROTOCOL` (if set). Otherwise only public balances are shown, with a short warning. Pass `--include` to sync one or more protocols explicitly (required for multiple protocols at once, or for any private balance when the env is unset).
+
+| Option | Description |
+|--------|-------------|
+| `--wallet <name>` | Wallet (optional in interactive mode). |
+| `--password <password>` | Unlock password. |
+| `--rpc-url <url>` | RPC endpoint. |
+| `--include <protocols>` | Comma-separated private protocols to sync (`railgun`, `privacy-pools`, `tornado`). Default: `DEFAULT_PRIVACY_PROTOCOL` only, or none if unset. |
+| `--verbose` | Human: per-address public breakdown + private note list for included protocols. JSON: adds `public_account_indexes_by_address` and `private_notes`. |
+| `--tokensList <addrs>` | Extra ERC-20 addresses (comma- or space-separated), merged with chain defaults. |
+| `--non-interactive` | JSON only; requires `--wallet` and `--password`. |
+| `--dataDir <path>` | Data root. |
+
+**Interactive:** wallet picker, password, loading spinner, formatted tables.
+
+Default Sepolia ERC-20s include USDC and WETH; mainnet adds USDC, USDT, DAI, WETH.
+
+**Examples:**
+
+```bash
+kohaku balances --wallet testWallet --include tornado
+kohaku balances --wallet testWallet --include railgun,tornado --verbose
+kohaku balances --wallet testWallet --verbose --include privacy-pools --tokensList 0xYourToken
+```
+
+---
+
+### `transfer`
+
+Transfer ETH or ERC-20 tokens from one wallet public account to any public address. By default, the command simulates the transfer and prints its transaction payload without submitting it.
+
+| Option | Description |
+|--------|-------------|
+| `--wallet <name>` | Wallet. |
+| `--password <password>` | Unlock password. |
+| `--from <address-or-index>` | Sender public account address or HD index. |
+| `--from-priv` | With `--broadcast`, derive an indexed sender from the mnemonic if it is not in the stored public account list. |
+| `--to <address>` | Recipient address. |
+| `--token <address\|symbol\|eth>` | Token address or symbol (default: `eth`). |
+| `--amount-wei <n>` | Amount in base units. |
+| `--amount-formatted <decimal>` | Human-readable amount using token decimals. |
+| `--amount-max` | Send the full ERC-20 balance, or the maximum ETH balance after reserving estimated gas. |
+| `--rpc-url <url>` | RPC endpoint. |
+| `--broadcast` | Sign and submit on-chain. Omit to simulate and print the transaction payload. |
+| `--non-interactive` | JSON output; requires `--wallet`, `--password`, `--from`, `--to`, and one amount flag. |
+| `--dataDir <path>` | Data root. |
+
+Provide at most one of `--amount-wei`, `--amount-formatted`, or `--amount-max`. In interactive mode, omitted sender, recipient, and amount values are prompted.
+
+**Examples:**
+
+```bash
+kohaku transfer --wallet testWallet --from 0 --to 0xRecipient --amount-formatted 0.01
+kohaku transfer --wallet testWallet --from 0 --to 0xRecipient --token USDC --amount-max --broadcast
+```
+
+---
+
+### `transact-raw`
+
+Simulate or submit one or more raw contract calls from a public account. Calls are processed sequentially in the order supplied.
+
+| Option | Description |
+|--------|-------------|
+| `--targets <addresses>` | **Required.** Comma- or space-separated contract addresses. |
+| `--payloads <hex>` | **Required.** Comma- or space-separated calldata values matching `--targets` by position. |
+| `--values <wei>` | ETH value in wei for each call (default: `0` for every call). The count must match `--targets`. |
+| `--wallet <name>` | Wallet. |
+| `--password <password>` | Unlock password. |
+| `--from <address-or-index>` | Sender public account address or HD index. |
+| `--from-priv` | With `--broadcast`, derive an indexed sender from the mnemonic if it is not in the stored public account list. |
+| `--rpc-url <url>` | RPC endpoint. |
+| `--broadcast` | Sign and submit each call on-chain. Omit to simulate and print transaction payloads. |
+| `--non-interactive` | JSON output; requires `--wallet`, `--password`, and `--from`. |
+| `--dataDir <path>` | Data root. |
+
+Each target must have one payload and, when provided, one value. Every call is simulated before any transaction is broadcast.
+
+**Examples:**
+
+```bash
+kohaku transact-raw --wallet testWallet --from 0 --targets 0xContract --payloads 0xCalldata
+kohaku transact-raw --wallet testWallet --from 0 --targets 0xContractA,0xContractB --payloads 0xDataA,0xDataB --values 0,1000000000000000 --broadcast
+```
+
+---
+
+### `shield`
+
+Move funds from a **public** account into a private protocol.
+
+| Option | Description |
+|--------|-------------|
+| `--protocol <railgun\|privacy-pools\|tornado>` | Required unless `DEFAULT_PRIVACY_PROTOCOL` is set to one of those values. |
+| `--wallet <name>` | Wallet. |
+| `--password <password>` | Unlock password. |
+| `--from <address-or-index>` | Sender public account (address or HD index). |
+| `--from-priv` | With `--broadcast`: derive private key by index from mnemonic if account not yet in stored public list. |
+| `--token <address\|eth>` | Token (default: `eth`). |
+| `--amount-wei <n>` | Amount in base units. |
+| `--amount-formatted <decimal>` | Human amount (uses token decimals). |
+| `--rpc-url <url>` | RPC endpoint. |
+| `--broadcast` | Sign and send on-chain. **Omit** for dry-run (transaction JSON only). |
+| `--base-fee-gwei`, `--priority-fee-gwei` | Optional fee overrides (reserved; auto fees used today). |
+| `--non-interactive` | JSON output; requires `--wallet`, `--password`, `--from`, and an amount flag. |
+| `--dataDir <path>` | Data root. |
+
+**Interactive (no amount / from flags):** lists public accounts with balances for the token → amount prompt → account picker → dry-run JSON or confirmations with `--broadcast`.
+
+**Protocols:**
+
+- **privacy-pools** — Native ETH shield; non-ETH tokens must be on the protocol whitelist for your chain.
+- **railgun** — ETH and ERC-20; non-ETH may need an approval transaction before shield.
+- **tornado** — ETH only; amount must be an exact multiple of 0.1 ETH (e.g. `1.3` OK, `1.35` not).
+
+**Examples:**
+
+```bash
+kohaku shield --protocol tornado --wallet testWallet --from 0 --amount-formatted 0.1 --broadcast
+kohaku shield --protocol railgun --wallet testWallet --from 0 --token 0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238 --amount-formatted 10 --broadcast
+```
+
+---
+
+### `unshield`
+
+Withdraw **private** balance to a **public** address via the protocol broadcaster / relayer.
+
+| Option | Description |
+|--------|-------------|
+| `--protocol <railgun\|privacy-pools\|tornado>` | Required unless `DEFAULT_PRIVACY_PROTOCOL` is set to one of those values. |
+| `--wallet <name>` | Wallet. |
+| `--password <password>` | Unlock password. |
+| `--to <address>` | Recipient public address. |
+| `--next` | Create and use the next fresh public account (mutually exclusive with `--to`). |
+| `--token <address\|eth>` | Token (default: `eth`). |
+| `--amount-wei <n>` | Amount in base units. |
+| `--amount-formatted <decimal>` | Human amount. |
+| `--amount-max` | Maximum spendable amount (Privacy Pools: largest single note; Tornado: sum of unspent notes). |
+| `--tail-calls <target:calldata[:value],...>` | Ordered calls appended after the Tornado payout call. Optional third field is `msg.value` (hex or decimal wei). Currently Tornado-only. |
+| `--rpc-url <url>` | RPC endpoint. |
+| `--broadcast` | Submit via the protocol broadcaster, relayer, or paymaster. **Omit** to print prepared private operation JSON only. |
+| `--without-tor` | Disable Tor for Pimlico bundler traffic (railgun / tornado). **Default: Tor on** — a local proxy forwards Pimlico JSON-RPC through [tor-js](https://github.com/privacy-ethereum/tor-js). Privacy Pools is unaffected (uses fastrelay). First Tor bootstrap may take several seconds. |
+| `--non-interactive` | JSON; requires `--wallet`, `--password`, `--to` or `--next`, and an amount flag. |
+| `--dataDir <path>` | Data root. |
+
+**Interactive:** recipient menu (next fresh / custom address / existing account) → amount (shows max; Privacy Pools capped by largest single note; Tornado by total unspent notes) → prepared op or broadcast confirmation.
+
+**Tornado amounts:** shields and unshields must be an exact multiple of 0.1 ETH (e.g. `1.3` OK, `1.35` not). Unshield can combine multiple notes in one UserOp to reach that total (e.g. `0.2` or `1.2`).
+
+**Examples:**
+
+```bash
+kohaku unshield --protocol tornado --wallet testWallet --next --amount-max
+kohaku unshield --protocol tornado --wallet testWallet --next --amount-formatted 0.1 --broadcast
+kohaku unshield --protocol tornado --wallet testWallet --next --amount-formatted 1 --tail-calls 0x1111111111111111111111111111111111111111:0x1234,0x2222222222222222222222222222222222222222:0xabcd:0x2386f26fc10000 --broadcast
+kohaku unshield --protocol railgun --wallet testWallet --to 0xStoredWalletAddress --token USDC --amount-formatted 25 --broadcast
+```
+
+---
+
+### `see-decrypted-storage <type>`
+
+Debug helper: decrypt and print wallet storage JSON.
+
+| Argument | `public` \| `railgun` \| `privacy-pools` |
+|--------|-------------------------------------------|
+| Options | Same wallet / password / `--non-interactive` / `--dataDir` as other commands. |
+
+Files: `public-accounts.json`, `rg-storage.json`, `ppv1-storage.json`.

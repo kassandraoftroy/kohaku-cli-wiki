@@ -6,6 +6,8 @@ summary: Send ETH or ERC-20s from a public account
 
 Once funds are on a public account (usually after an [unshield](./unshield.html)), you can move them with the CLI.
 
+If you already know the recipient and amount **before** unshielding, prefer attaching the payment as a [tail call](./tail-calls.html) so the fresh address never sits idle with the full note. Use `transfer` when you already unshielded, or when you decide the destination only afterward.
+
 ## Simple transfers
 
 Dry-run a send (no `--broadcast`):
