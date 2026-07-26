@@ -20,19 +20,39 @@ If you want to use Railgun or Privacy Pools (V1) as the "default" protocol, simp
 
 ## Set RPC_URL
 
-We need an Ethereum `RPC_URL` . Ideally, this is your local node and gives you the cleanest privacy properties.
+We need an Ethereum `RPC_URL`. Ideally, this is your **local node** — that gives you the cleanest privacy properties.
 
 ```bash
 export RPC_URL=http://localhost:8545
 ```
 
-If not you can use a remote RPC provider (Alchemy, Infura, Ankr, etc) URL. But _crucially_, you are now entrusting the RPC provider with privacy critical information (e.g. the ethereum addresses you query, linking them together).
+Everything else the CLI contacts (Pimlico, Subsquid, PPOI, saga, proving artifacts, ASP/fastrelay, …) goes through **Tor by default**. The Ethereum RPC is the deliberate exception: it stays on clearnet. That is fine when the RPC is local. If you use a remote provider instead, assume it can see which addresses you query and may already identify you via an API key — Tor would not help much there anyway. Details: [Network traffic](./network-traffic.html).
 
-example:
+If you must use a remote RPC provider (Alchemy, Infura, Ankr, etc):
 
 ```bash
 export RPC_URL=https://rpc.ankr.com/eth/some-api-key
 ```
+
+You are then entrusting that provider with privacy-critical information (addresses you query, how they cluster together). Prefer a local node when you can.
+
+## Optional: `KOHAKU_GETLOGS_MAX_BLOCK_SPAN`
+
+Some RPCs limit how large an `eth_getLogs` block range they accept. The CLI defaults to **499**. Raise or lower it to match what your node / provider allows:
+
+```bash
+export KOHAKU_GETLOGS_MAX_BLOCK_SPAN=499
+```
+
+## Optional: `KOHAKU_WITHOUT_TOR`
+
+Tor is **on** by default for non-RPC HTTP. Set this to always skip Tor without passing `--without-tor` on every command:
+
+```bash
+export KOHAKU_WITHOUT_TOR=1
+```
+
+Default is unset / `0` (Tor on). Only disable Tor when you understand you are revealing your home IP to Pimlico and other privacy-protocol endpoints — see [Network traffic](./network-traffic.html).
 
 ## Data directory
 

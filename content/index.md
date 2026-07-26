@@ -35,4 +35,5 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 ## Appendix
 
 - [Import Wallet](./import.html) — import an existing seed phrase
+- [Network Traffic](./network-traffic.html) — Tor vs clearnet, and how to audit contacts
 - [Commands](./commands.html) — short command reference

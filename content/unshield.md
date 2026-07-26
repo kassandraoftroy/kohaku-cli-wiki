@@ -30,11 +30,11 @@ Amounts must still match Tornado note rules (ETH: multiples of 0.1).
 
 ## Network metadata
 
-Unshields are submitted through a paymaster / bundler path (Pimlico).
+Unshields are submitted through a paymaster / bundler path (Pimlico). That traffic — and other privacy-protocol HTTP — goes through **Tor by default**. Ethereum RPC stays clearnet (ideally a local node).
 
-To mitigate privacy concerns (pimlico could see your ip and network metadata) the CLI routes all calls to the pimlico endpoint through Tor Network by default.
+**If you disable Tor** (`--without-tor` or `KOHAKU_WITHOUT_TOR=1`) you reveal your home IP to Pimlico and link that activity to you.
 
-**If you disable Tor** on unsheilds (`--without-tor`) then **you are revealing your home IP to pimlico and linking oyur activity**
+See [Network traffic](./network-traffic.html) for the full picture and how to audit contacts with `view-network-traffic`.
 
 ## After unshielding
 
