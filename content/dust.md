@@ -28,5 +28,3 @@ kohaku balances --include tornado,railgun
 # later: unshield from Railgun to a fresh address, then shield into Tornado
 kohaku unshield --protocol railgun --next --amount-max --broadcast
 ```
-
-> **Tip:** Dust hygiene is optional perfectionism at small sizes. Prioritize correct receive → shield → wait → unshield habits for the large balances first.
