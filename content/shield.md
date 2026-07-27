@@ -22,12 +22,14 @@ Interactive mode lets you pick the public account that holds the funds. When it 
 kohaku shield --protocol tornado --amount-formatted 1.0 --broadcast
 ```
 
-For stablecoins, pass the token:
+For ERC20s, pass the token:
 
 ```bash
 kohaku shield --protocol tornado --token USDC --amount-formatted 1000 --broadcast
 kohaku shield --protocol tornado --token DAI --amount-formatted 1000 --broadcast
 ```
+
+For now these are the only relevant tokens with tornado pools, hopefully more tokens and amounts get bootstrapped and we'll add them to the CLI.
 
 ## Note sizes
 

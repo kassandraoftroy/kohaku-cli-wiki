@@ -12,7 +12,7 @@ Every time money comes in — from yourself, an exchange, a friend, a payroll �
 kohaku next-fresh-address
 ```
 
-This prints a new `0x…` address from your wallet and saves it. Send funds **to that address only**.
+This prints a new `0x…` address from your wallet and saves it. Send funds **to that address only** and **ideally only once**.
 
 ### Receiving from yourself
 
@@ -28,9 +28,9 @@ Same flow — generate a fresh address, give **only that address** to the sender
 
 ## What to receive
 
-This guide focuses on **ETH**, **USDC**, and **DAI** on mainnet. Those are the assets you will later [shield into Tornado Cash](./shield.html).
+This guide focuses on **ETH**, **USDC**, and **DAI** on mainnet. Those are the assets you can later [shield into Tornado Cash](./shield.html). These Tornado pools have the most usage and thus give the most privacy. (Ideally more tokens and sizes are bootstrapped!)
 
-> **Tip:** Prefer receiving amounts that fit Tornado note sizes cleanly (for ETH that means multiples of **0.1 ETH**). Leftover dust is awkward — see [Dust Management](./dust.html).
+> **Tip:** Prefer receiving amounts that fit Tornado note sizes cleanly (for ETH that means multiples of **0.1 ETH** + small delta for gas). Leftover dust can be awkward — see [Dust Management](./dust.html).
 
 ## Next
 

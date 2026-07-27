@@ -26,7 +26,9 @@ Or take everything available:
 kohaku unshield --next --amount-max --broadcast
 ```
 
-Amounts must still match Tornado note rules (ETH: multiples of 0.1).
+> **IMPORTANT:** when you unshield multiple notes at once e.g. 0.2 ETH or from multiple pools at once e.g. 1.1 ETH you could be decreasing your anonymity set significantly. Especially if you sheilded 1.1 ETH into two pool from a public account prior. Be mindful of these fingerprinting techniques! 
+
+Amounts must still match Tornado note rules (e.g. multiples of 0.1 for ETH). Also if you have a single 1 ETH note a 0.1 ETH or 0.2 ETH unshield will fail (you don't have any 0.1 notes to unshield)
 
 ## Network metadata
 

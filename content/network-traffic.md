@@ -80,5 +80,5 @@ RPC rows always show as clearnet — that is expected. What you want to watch fo
 ## Related
 
 - [Set Env](./env.html) — `RPC_URL`, `KOHAKU_WITHOUT_TOR`, `KOHAKU_GETLOGS_MAX_BLOCK_SPAN`
-- [Commands](./commands.html) — full `view-network-traffic` / `--without-tor` flag reference
+- [Full Commands Reference](./commands.html) — full `view-network-traffic` / `--without-tor` flag reference
 - [Unshield Funds](./unshield.html) — why Pimlico traffic matters for withdrawals

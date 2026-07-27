@@ -6,6 +6,8 @@ summary: Practical guide to kohaku-cli
 
 Welcome! This is a practical user guide for **kohaku-cli**
 
+Find the [github repository here](https://github.com/kassandraoftroy/kohaku-cli)
+
 ## What is kohaku-cli?
 
 **kohaku-cli** is a bare bones Command Line Interface that can be used as a minimal Ethereum Wallet.
@@ -36,4 +38,4 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 
 - [Import Wallet](./import.html) — import an existing seed phrase
 - [Network Traffic](./network-traffic.html) — Tor vs clearnet, and how to audit contacts
-- [Commands](./commands.html) — short command reference
+- [Full Commands Reference](./commands.html) — short command reference

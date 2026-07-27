@@ -12,7 +12,7 @@ You will pick your wallet (if you have more than one), enter the password, and w
 
 You should see:
 
-- **Public** — ETH / USDC / DAI (and other tokens) sitting on your addresses, still linked to whoever sent them
+- **Public** — ETH / ERC20 tokens sitting on your addresses, potentially linked to whoever sent them. (Only the top 25-50 tokens show up automatically you can scan for custom tokens with a `--tokens` flag)
 - **Private** — what you have already shielded (with `DEFAULT_PRIVACY_PROTOCOL=tornado`, this is your Tornado balance)
 
 For a per-address breakdown:
@@ -21,10 +21,10 @@ For a per-address breakdown:
 kohaku balances --verbose
 ```
 
-Pin a wallet explicitly if you prefer:
+If you would like to see private blances from other protocols than your default, or multiple privacy protocols at once:
 
 ```bash
-kohaku balances --wallet my-mainnet-wallet --verbose
+kohaku balances --include railgun,privacy-pools,tornado
 ```
 
 ## Reading the result
@@ -33,4 +33,4 @@ kohaku balances --wallet my-mainnet-wallet --verbose
 - After a successful [shield](./shield.html), public balance drops and private (Tornado) balance rises
 - After an [unshield](./unshield.html), private drops and a (hopefully fresh) public address receives funds
 
-If a deposit is missing, wait for more confirmations and run `balances` again. Also double-check you are on the right wallet and that `RPC_URL` points at mainnet.
+If a deposit is missing, wait for more confirmations and run `balances` again. Also double-check you are on the right wallet and that `RPC_URL` points at right network.

@@ -8,13 +8,15 @@ Now that we've created a wallet. Let's configure the important environment varia
 
 > **Tip:** if you don't want to set the env vars in every new terminal session then you can add these lines to your `~/.bashrc` or `~/.zshrc`.
 
-### Set DEFAULT_PRIVACY_PROTOCOL
+## Set DEFAULT_PRIVACY_PROTOCOL
 
-This is a convenience environment variable, picking a single privacy protocol as the "default" to display balances for and interact with. This guide will focus on Tornado Cash as the example. So simply execute:
+This guide will focus on Tornado Cash as the main privacy solution. So simply execute:
 
 ```bash
 export DEFAULT_PRIVACY_PROTOCOL=tornado
 ```
+
+This is a convenience environment variable, setting a single privacy protocol as the "default" to display balances for and interact with (so you don't have to use `--protocol` or `--include` for every command).
 
 If you want to use Railgun or Privacy Pools (V1) as the "default" protocol, simply set as `railgun` or `privacy-pools`.
 
@@ -34,7 +36,7 @@ If you must use a remote RPC provider (Alchemy, Infura, Ankr, etc):
 export RPC_URL=https://rpc.ankr.com/eth/some-api-key
 ```
 
-You are then entrusting that provider with privacy-critical information (addresses you query, how they cluster together). Prefer a local node when you can.
+You are then entrusting that provider with privacy-critical information (addresses you query, how they cluster together, network metadata). Prefer a local node when you can OR a local process that can mirror a local node (a project i am working on!)
 
 ## Optional: `KOHAKU_GETLOGS_MAX_BLOCK_SPAN`
 

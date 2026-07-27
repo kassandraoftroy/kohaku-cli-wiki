@@ -1,9 +1,13 @@
 ---
-title: Commands
+title: Full Commands Reference
 order: 18
+section: appendix
+summary: Full command reference for kohaku-cli
 ---
 
-Quick map of every command. Flags evolve — when in doubt, run `kohaku help` or `kohaku <command> --help`.
+## Commands Summary
+
+Quick map of every command. Flags may evolve — when in doubt, run `kohaku help` or `kohaku <command> --help`.
 
 | Command | What it does |
 |---|---|
@@ -25,7 +29,7 @@ Most mutating commands **dry-run by default**. Add `--broadcast` only when you i
 
 ---
 
-## Commands list
+## Commands Reference
 
 Global behavior:
 
