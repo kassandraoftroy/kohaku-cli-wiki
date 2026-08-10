@@ -1,6 +1,6 @@
 ---
 title: Network Traffic
-order: 19
+order: 20
 section: appendix
 summary: Tor vs clearnet — what the CLI contacts and how to audit it
 ---

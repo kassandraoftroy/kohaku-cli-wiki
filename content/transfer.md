@@ -37,8 +37,22 @@ kohaku transfer --from 0xYourAddress --to 0xRecipient --token USDC --amount-max 
 kohaku transfer --from 0xYourAddress --to 0xRecipient --amount-max --broadcast
 ```
 
+## Stealth transfers (by name)
+
+If the recipient has published a scheme-1 stealth meta-address (via [Init Profile](./init-profile.html) / ERC-6538, or a name text record), you can pay them privately with `--stealth`:
+
+```bash
+kohaku transfer --from 0xYourAddress --to tatsumaki.gwei --stealth --amount-formatted 0.05
+kohaku transfer --from 0xYourAddress --to tatsumaki.gwei --stealth --amount-formatted 0.05 --broadcast
+```
+
+The CLI resolves their stealth meta from the name (text record or registry), then sends an EIP-5564 stealth transfer to a fresh one-time address. If they have **not** registered a stealth meta-address, the command errors (it cannot find a stealth meta-address for that name).
+
+You can also pass a raw `st:…` meta URI as `--to` with `--stealth`.
+
 ## Privacy note
 
 A transfer from account A to account B **publicly links** them. Sending between your own kohaku accounts is still a link. If those accounts were meant to stay separate, you just undid that — see [Keeping activity delinked](./delinked.html).
 
-Prefer: unshield → pay the external destination directly (or use [tail calls](./tail-calls.html)) rather than hopping through several of your own addresses.
+Prefer: unshield → pay the external destination directly (or use [tail calls](./tail-calls.html)) rather than hopping through several of your own addresses. Stealth transfers (`--stealth`) avoid linking the payment to a reused recipient address — the receiver still discovers it with `balances`.
+

@@ -1,6 +1,6 @@
 ---
 title: Full Commands Reference
-order: 20
+order: 21
 section: appendix
 summary: Full command reference for kohaku-cli
 ---
