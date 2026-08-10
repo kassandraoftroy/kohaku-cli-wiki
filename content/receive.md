@@ -24,15 +24,13 @@ If you are moving funds from another wallet you already control (hot wallet, exc
 
 ### Receiving from someone else
 
-1. Same flow — generate a fresh address, give **only that address** to the sender. Do not hand out an address you have already used for other activity.
+1. Foolproof Option: same flow as above — generate a fresh address, give **only that address** to the sender. Do not hand out an address you have already used for other activity. (Downside: you have to go generate a fresh address every time you want to recieve)
 
-OR 
-
-2. Give them your stealth inbox `st:eth:0xabc...123` or if they have a wallet client that natively uses the stealth address protocol you can just give them your profile name `something.gwei` and their wallet will automagically route it to a fresh address for you. This is convenient because you don't need to give them a fresh address everytime you expect to recieve, they will naturally generat it using the stealth address protocol.
+2. Advanced Option: Give sender your stealth inbox `st:eth:0xabc...123` or ideally you could just give them your profile name `something.gwei` if their wallet client knows to resolve your stealth inbox from there and route funds to a fresh address all under the hood. Upside: you can recieve to fresh addresses over and over without having to coordinate the receiving address each time (also easier to remember human readable names for sender). Downside: Sender needs software that knows "stealth address" protocol / an uninitiated sender might just send to your doxxed something.gwei account directly.
 
 ## What to receive
 
-This guide focuses on **ETH**, **USDC**, and **DAI** on mainnet. Those are the assets you can later [shield into Tornado Cash](./shield.html). These Tornado pools have the most usage and thus give the most privacy. (Ideally more tokens and sizes are bootstrapped!)
+This guide focuses on **ETH**, **USDC**, and **DAI** on mainnet as preferred tokens to recieve since those are the assets you can later [shield into Tornado Cash](./shield.html). These Tornado pools have the most usage and thus give the most privacy. (Ideally more tokens and sizes are well bootstrapped!)
 
 > **Tip:** Prefer receiving amounts that fit Tornado note sizes cleanly (for ETH that means multiples of **0.1 ETH** + small delta for gas). Leftover dust can be awkward — see [Dust Management](./dust.html).
 

@@ -8,7 +8,7 @@ Next we set up your wallet **profile** — a public name + stealth inbox on HD a
 
 ## Fund index 0
 
-`init-profile` needs a little ETH on index `0` (gas + name registration). The first `next-fresh-address` is usually that account:
+`init-profile` needs a little ETH on index `0` (gas + name registration). The first run of `next-fresh-address` should return you that account:
 
 ```bash
 kohaku next-fresh-address
@@ -20,20 +20,20 @@ Send ETH to the printed address, then confirm:
 kohaku balances --verbose
 ```
 
-You should see index `0` funded. Later money you intend to [shield](./shield.html) should go to **new** fresh addresses — not this one. See [Receive Funds](./receive.html).
+You should see index `0` with an ETH balance. Ideally, later funds you intend to hold and [shield](./shield.html) should go to **new** fresh addresses — not this one. See [Receive Funds](./receive.html).
 
 ## Run init-profile
 
 Pick a name (this guide uses `.gwei`) and publish:
 
 ```bash
-kohaku init-profile --name something.gwei
+kohaku init-profile --name your-profile-name.gwei
 ```
 
 Dry-run first (no `--broadcast`), then:
 
 ```bash
-kohaku init-profile --name something.gwei --broadcast
+kohaku init-profile --name your-profile-name.gwei --broadcast
 ```
 
 That commit → wait ~60s → one UserOp registers the name, sets records, and publishes stealth keys on ERC-6538.
