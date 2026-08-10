@@ -1,6 +1,6 @@
 ---
 title: Transfer Funds
-order: 10
+order: 11
 summary: Send ETH or ERC-20s from a public account
 ---
 

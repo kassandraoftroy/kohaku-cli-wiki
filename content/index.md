@@ -21,6 +21,7 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 - [Install](./install.html) — installation guide
 - [Create Wallet](./create.html) — create a new wallet
 - [Set Env](./env.html) — set environment variables
+- [Init Profile](./init-profile.html) — name + stealth inbox on index 0
 - [Receive Funds](./receive.html) — receive funds from yourself or others
 - [Check Balances](./balances.html) — see your balances
 - [Shield Funds](./shield.html) — deposit into Tornado Cash
@@ -37,5 +38,6 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 ## Appendix
 
 - [Import Wallet](./import.html) — import an existing seed phrase
+- [Managing Ethereum Names](./managing-names.html) — renew, transfer, text records, website
 - [Network Traffic](./network-traffic.html) — Tor vs clearnet, and how to audit contacts
 - [Full Commands Reference](./commands.html) — short command reference

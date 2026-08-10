@@ -1,6 +1,6 @@
 ---
 title: Check Balances
-order: 5
+order: 6
 summary: See public and private balances
 ---
 

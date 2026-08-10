@@ -1,6 +1,6 @@
 ---
 title: Using Dapps
-order: 8
+order: 9
 summary: How to approach dapp interactions after an unshield
 ---
 

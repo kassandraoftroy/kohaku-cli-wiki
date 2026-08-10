@@ -1,6 +1,6 @@
 ---
 title: Transact Raw
-order: 11
+order: 12
 summary: Submit dapp calldata from a public account after unshielding
 ---
 

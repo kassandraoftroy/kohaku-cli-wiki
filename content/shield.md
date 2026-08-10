@@ -1,6 +1,6 @@
 ---
 title: Shield Funds
-order: 6
+order: 7
 summary: Move public ETH and stablecoins into Tornado Cash
 ---
 

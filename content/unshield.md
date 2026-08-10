@@ -1,6 +1,6 @@
 ---
 title: Unshield Funds
-order: 7
+order: 8
 summary: Withdraw from Tornado to a fresh public address
 ---
 

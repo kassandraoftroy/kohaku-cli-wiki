@@ -1,6 +1,6 @@
 ---
 title: Receive Funds
-order: 4
+order: 5
 summary: Get a fresh address and receive ETH or stablecoins
 ---
 
@@ -24,7 +24,11 @@ If you are moving funds from another wallet you already control (hot wallet, exc
 
 ### Receiving from someone else
 
-Same flow — generate a fresh address, give **only that address** to the sender. Do not hand out an address you have already used for other activity.
+1. Same flow — generate a fresh address, give **only that address** to the sender. Do not hand out an address you have already used for other activity.
+
+OR 
+
+2. Give them your stealth inbox `st:eth:0xabc...123` or if they have a wallet client that natively uses the stealth address protocol you can just give them your profile name `something.gwei` and their wallet will automagically route it to a fresh address for you. This is convenient because you don't need to give them a fresh address everytime you expect to recieve, they will naturally generat it using the stealth address protocol.
 
 ## What to receive
 

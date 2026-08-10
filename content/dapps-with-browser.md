@@ -1,6 +1,6 @@
 ---
 title: Dapps in Browser
-order: 12
+order: 13
 summary: Last resort — export one key into a clean browser wallet
 ---
 
