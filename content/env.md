@@ -48,13 +48,28 @@ export KOHAKU_GETLOGS_MAX_BLOCK_SPAN=499
 
 ## Optional: `KOHAKU_WITHOUT_TOR`
 
-Tor is **on** by default for non-RPC HTTP. Set this to always skip Tor without passing `--without-tor` on every command:
+Tor is **on** by default for non-RPC HTTP. There is **no Tor→clearnet fallback** for saga CDN or proving artifacts — those fail if Tor cannot complete the request (unless you explicitly disable Tor). Set this to always skip Tor without passing `--without-tor` on every command:
 
 ```bash
 export KOHAKU_WITHOUT_TOR=1
 ```
 
 Default is unset / `0` (Tor on). Only disable Tor when you understand you are revealing your home IP to Pimlico and other privacy-protocol endpoints — see [Network traffic](./network-traffic.html).
+
+## Optional: proving artifacts
+
+Railgun / Tornado keys cache under `<dataDir>/proving-artifacts`. Pre-warm with [`fetch-artifacts`](./fetch-artifacts.html).
+
+```bash
+# remote base (default shown)
+export KOHAKU_ARTIFACTS_BASE_URL=https://artifacts.0000000000.org
+
+# large Tor GET budget in ms (default 45000)
+export KOHAKU_TOR_CDN_TIMEOUT_MS=45000
+
+# per-request Tor logs
+export KOHAKU_TOR_DEBUG=1
+```
 
 ## Data directory
 

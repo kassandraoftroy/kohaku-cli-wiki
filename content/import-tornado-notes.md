@@ -80,7 +80,7 @@ Export prints raw secrets to stdout — same care as import. Interactive mode as
 ## Tips
 
 - Import only into a wallet you trust to hold those secrets long-term. After a successful import, treat the old plaintext note file as spent credentials still (until you have unshielded and are sure nothing else has a copy).
-- First Tornado sync on a fresh wallet can fall back to clearnet for saga CDN — highly privacy-conscious users may want a VPN for that step ([Network traffic](./network-traffic.html)).
+- Saga CDN / proving artifacts are **Tor-or-fail** (no clearnet fallback). Pre-warm keys with [`fetch-artifacts`](./fetch-artifacts.html) if large Tor downloads are flaky; see [Network traffic](./network-traffic.html).
 - You do **not** need the original deposit address or seed — the note string is enough to prove and withdraw.
 
 Full flags: [Full Commands Reference](./commands.html) (`import-tornado-note` / `export-tornado-note`).

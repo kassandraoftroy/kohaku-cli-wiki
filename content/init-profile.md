@@ -24,19 +24,26 @@ You should see index `0` with an ETH balance. Ideally, later funds you intend to
 
 ## Run init-profile
 
-Pick a name (this guide uses `.gwei`) and publish:
+The command can be **fully interactive** — no flags required:
+
+```bash
+kohaku init-profile
+```
+
+You will be prompted for wallet / password (if needed), then whether to choose a name (`.eth` / `.gwei` / `.wei`) or continue with stealth keys only. Dry-run first (no `--broadcast`), review the prepared txs, then re-run with `--broadcast` when ready:
+
+```bash
+kohaku init-profile --broadcast
+```
+
+You can still pass flags to skip prompts:
 
 ```bash
 kohaku init-profile --name your-profile-name.gwei
-```
-
-Dry-run first (no `--broadcast`), then:
-
-```bash
 kohaku init-profile --name your-profile-name.gwei --broadcast
 ```
 
-That commit → wait ~60s → one UserOp registers the name, sets records, and publishes stealth keys on ERC-6538.
+With a name: commit → wait ~60s → one UserOp registers the name, sets records, and publishes stealth keys on ERC-6538. With `--no-name` (or the interactive “no name” path): a single EOA `registerKeys` transaction.
 
 Check anytime with:
 
@@ -66,14 +73,14 @@ If you already own a `.eth` / `.gwei` / `.wei` name elsewhere:
 ## Other options
 
 ```bash
-# ENS (bare label needs --protocol)
+# ENS (bare label needs --protocol, or pick protocol interactively)
 kohaku init-profile --name alice --protocol ens --broadcast
 
 # stealth keys only, no name
 kohaku init-profile --no-name --broadcast
 ```
 
-Provide exactly one of `--name` or `--no-name`.
+In interactive mode, `--name` / `--no-name` are optional (the CLI prompts). With `--non-interactive`, provide exactly one of `--name` or `--no-name`.
 
 ## Discipline after setup
 

@@ -15,13 +15,13 @@ You will be prompted for the mnemonic (masked) and an encryption password. The C
 
 ## Stealth scan floor (`--stealth-start-block`)
 
-On import you can also set where later `balances` runs should start scanning ERC-5564 stealth address announcements:
+On `--import`, you should usually pass `--stealth-start-block` so later `balances` runs do **not** try to sync ERC-5564 stealth announcements from genesis:
 
 ```bash
 kohaku create-wallet my-restored-wallet --import --rpc-url "$RPC_URL" --stealth-start-block <block>
 ```
 
-That writes `.stealth-start-block` in the wallet data dir. Without a floor, a full announcement scan can walk a huge range of history.
+That writes `.stealth-start-block` in the wallet data dir. Without a floor, a full announcement scan can walk a huge range of history (slow and RPC-heavy).
 
 **If you do not expect any stealth reception yet** (new-to-you seed for kohaku workflows, or you know nothing was paid to this seed’s stealth meta-address), pass the **current / latest block** — same idea as a brand-new wallet, which records the chain tip automatically. That skips pointless pre-history.
 
