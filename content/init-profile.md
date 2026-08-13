@@ -24,7 +24,7 @@ You should see index `0` with an ETH balance. Ideally, later funds you intend to
 
 ## Run init-profile
 
-The command can be **fully interactive** — no flags required:
+To interactively select a name for your profile just run:
 
 ```bash
 kohaku init-profile

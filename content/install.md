@@ -17,6 +17,8 @@ npm run build
 
 (requires **Node.js 22+**)
 
+> **Note:** for linux users you may get error on `npm run build` if so just follow the instructions from the error ("try `npm i` again after removing both package-lock.json and node_modules directory")
+
 At this point you _could_ simply use `npm run dev:prod --` as the prefix to commands (e.g. `npm run dev:prod -- --version`) but you can only invoke the kohaku-cli from inside the root folder of the repo.
 
 To use the `kohaku` command and to invoke the CLI from anywhere on your machine, proceed to the next step. 

@@ -5,7 +5,7 @@ section: appendix
 summary: Tor vs clearnet — what the CLI contacts and how to audit it
 ---
 
-By default, **all non-RPC network traffic** from the CLI goes through [Tor](https://github.com/privacy-ethereum/tor-js). The Ethereum RPC is the exception: it stays on clearnet, because it is hopefully a **local node** — and if it is not, a remote provider URL usually already carries an identifying API key anyway.
+By default, **all non-RPC network traffic** from the CLI goes through [Tor](https://github.com/privacy-ethereum/tor-js). The Ethereum RPC is the exception: it stays on clearnet, because it is hopefully a **local node** — and if it is not, a remote provider URL usually already carries an identifying API key anyway (public RPC endpoints are not strong enough to handle the amount of requests needed by the CLI)
 
 There is **no Tor→clearnet fallback**. Saga CDN and proving-artifact downloads are Tor-or-fail (unless you explicitly pass `--without-tor` / set `KOHAKU_WITHOUT_TOR=1`).
 
@@ -31,6 +31,8 @@ First Tor bootstrap may take a few seconds. Set `KOHAKU_TOR_DEBUG=1` if you need
 Railgun / Tornado proving keys live under `<dataDir>/proving-artifacts`. On shield / unshield / sync, the CLI serves from that cache when present; otherwise it fetches over Tor from `KOHAKU_ARTIFACTS_BASE_URL` (default `https://artifacts.0000000000.org`) — and **fails** if Tor cannot complete the download.
 
 Pre-warm the cache with [`fetch-artifacts`](./fetch-artifacts.html) so private ops do not need a large Tor download mid-flow. Optionally use `kohaku fetch-artifacts --without-tor` for a **one-shot clearnet** download (that IP is then associated with fetching kohaku artifacts); later private ops still use Tor for everything else and read artifacts from disk.
+
+You could also build the artifacts data dir manuallyif e.g. the kohaku artifacts url is down/censored.
 
 ## Disabling Tor
 
