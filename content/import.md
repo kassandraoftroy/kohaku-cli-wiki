@@ -15,15 +15,17 @@ You will be prompted for the mnemonic (masked) and an encryption password. The C
 
 ## Stealth scan floor (`--stealth-start-block`)
 
-On `--import`, the CLI writes `.stealth-start-block` so the first `balances` stealth scan starts at the Kohaku-schema floor (mainnet `25700000`, Sepolia `11455454`) unless you pass `--stealth-start-block`. That flag can still go back as far as the ERC-5564 announcer deploy block.
+By default, `--import` records the **current chain tip** in `.stealth-start-block` — same as a new wallet. Later `balances` runs do **not** walk historical ERC-5564 announcements.
+
+Only pass `--stealth-start-block` if this seed may already have received stealth payments:
 
 ```bash
+# historical scan from the Kohaku-schema floor (mainnet 25700000 / Sepolia 11455454)
+kohaku create-wallet my-restored-wallet --import --rpc-url "$RPC_URL" --stealth-start-block
+
+# or an explicit block (values below the ERC-5564 announcer deploy are rounded up)
 kohaku create-wallet my-restored-wallet --import --rpc-url "$RPC_URL" --stealth-start-block <block>
 ```
-
-**If you do not expect any stealth reception yet** (new-to-you seed for kohaku workflows, or you know nothing was paid to this seed’s stealth meta-address), pass the **current / latest block** — same idea as a brand-new wallet, which records the chain tip automatically. That skips pointless pre-history.
-
-If the seed may already have received stealth payments, set the floor to roughly when the seed was first used (or earlier), so `balances` can discover those announcements.
 
 You can also pass `--stealth-start-block` on an individual `balances` run (it can back-date below the wallet file). Use `--skip-stealth-scan` to skip discovery for a faster run; already-imported stealth accounts still appear in public totals.
 

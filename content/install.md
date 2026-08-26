@@ -55,7 +55,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 ## Update
 
-Note that to update the CLI you need to sync with latest `main` branch of the repository and and repeat these steps.
+Note that to update the CLI you need to sync with latest `main` branch of the repository and and repeat `npm run build`. That should update your cli (check with `kohaku --version`)
 
 
 
