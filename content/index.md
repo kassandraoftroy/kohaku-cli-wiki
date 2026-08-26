@@ -40,6 +40,7 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 - [Import Wallet](./import.html) — import an existing seed phrase
 - [Import Tornado Notes](./import-tornado-notes.html) — bring legacy Tornado notes into kohaku
 - [Managing Ethereum Names](./managing-names.html) — renew, transfer, text records, website
+- [Fetch Sync Cache](./fetch-sync-cache.html) — prefetch Tornado/Railgun sync history
 - [Fetch Artifacts](./fetch-artifacts.html) — pre-download proving keys
 - [Network Traffic](./network-traffic.html) — Tor vs clearnet, and how to audit contacts
-- [Full Commands Reference](./commands.html) — full command reference (0.0.3)
+- [Full Commands Reference](./commands.html) — full command reference (0.0.4)

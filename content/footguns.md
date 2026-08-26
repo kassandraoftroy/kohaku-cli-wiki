@@ -20,7 +20,7 @@ A short list of ways people accidentally deanonymize themselves. Skim it once; r
 
 - **Remote RPC endpoint** — the provider sees which addresses and state you query, and any txs you submit to the standard mempool; prefer a local node for true privacy ([Set Env](./env.html))
 - **Checking etherscan links from your home IP** - use `balances` command rather than etherscan and when you do check etherscan on activity that you want to keep unlinked, use Tor or a VPN.
-- **Disabling Tor on privacy HTTP** — Pimlico and other endpoints see your home IP; leave Tor on unless you know why ([Network traffic](./network-traffic.html)). Saga / artifacts do not fall back to clearnet anymore — if Tor fails, the op fails (pre-warm with [`fetch-artifacts`](./fetch-artifacts.html) if needed).
+- **Disabling Tor on privacy HTTP** — Pimlico and other endpoints see your home IP; leave Tor on unless you know why ([Network traffic](./network-traffic.html)). Saga / artifacts do not fall back to clearnet anymore — if Tor fails, the op fails. Prefetch sync history with [`fetch-sync-cache`](./fetch-sync-cache.html) and proving keys with [`fetch-artifacts`](./fetch-artifacts.html) if large Tor downloads are flaky.
 - **Importing an unlinked EOA key into a daily browser wallet** — now you link the existing browser wallet activity to this key ([Dapps in Browser](./dapps-with-browser.html))
 - **Leaving exported keys or seed phrase in terminal scrollback or screenshots** - Just be careful whenever exporting private keys or revealing the seed - close that terminal session when you're done and get the sensitive material off your copy clipboard.
 

@@ -1,6 +1,6 @@
 ---
 title: Network Traffic
-order: 21
+order: 22
 section: appendix
 summary: Tor vs clearnet — what the CLI contacts and how to audit it
 ---
@@ -11,7 +11,7 @@ There is **no Tor→clearnet fallback**. Saga CDN and proving-artifact downloads
 
 ## What goes over Tor
 
-When you run `balances` (with private protocols), `shield`, `unshield`, `transfer`, `transact-raw`, name commands, Tornado note import/export, or `fetch-artifacts`, the CLI may contact:
+When you run `balances` (with private protocols), `shield`, `unshield`, `transfer`, `transact-raw`, name commands, Tornado note import/export, `fetch-sync-cache`, or `fetch-artifacts`, the CLI may contact:
 
 | Category | Examples | Path |
 |---|---|---|
@@ -26,13 +26,19 @@ When you run `balances` (with private protocols), `shield`, `unshield`, `transfe
 
 First Tor bootstrap may take a few seconds. Set `KOHAKU_TOR_DEBUG=1` if you need Tor client logs. Large Tor GETs (saga / artifacts) time out after `KOHAKU_TOR_CDN_TIMEOUT_MS` (default **45000**).
 
+## Public-sync cache
+
+Shared **Railgun Subsquid** and **Tornado saga** HTTP pages live under `<dataDir>/public-sync-cache` and speed up those syncs (`balances`, `shield`, `unshield`). Prefetch with [`fetch-sync-cache`](./fetch-sync-cache.html). Anything newer than the snapshot is still fetched live (Tor by default) and written through.
+
+Privacy Pools is **not** covered. Wipe the cache with `kohaku clear-tor-cache --public-sync`.
+
 ## Proving artifacts cache
 
-Railgun / Tornado proving keys live under `<dataDir>/proving-artifacts`. On shield / unshield / sync, the CLI serves from that cache when present; otherwise it fetches over Tor from `KOHAKU_ARTIFACTS_BASE_URL` (default `https://artifacts.0000000000.org`) — and **fails** if Tor cannot complete the download.
+Railgun / Tornado proving keys live under `<dataDir>/proving-artifacts`. On **prove / unshield**, the CLI serves from that cache when present; otherwise it fetches over Tor from `KOHAKU_ARTIFACTS_BASE_URL` (default `https://artifacts.0000000000.org`) — and **fails** if Tor cannot complete the download. Event sync does **not** need these files.
 
-Pre-warm the cache with [`fetch-artifacts`](./fetch-artifacts.html) so private ops do not need a large Tor download mid-flow. Optionally use `kohaku fetch-artifacts --without-tor` for a **one-shot clearnet** download (that IP is then associated with fetching kohaku artifacts); later private ops still use Tor for everything else and read artifacts from disk.
+Pre-warm with [`fetch-artifacts`](./fetch-artifacts.html) so unshields do not need a large Tor download mid-flow. Optionally use `kohaku fetch-artifacts --without-tor` for a **one-shot clearnet** download (that IP is then associated with fetching kohaku artifacts); later private ops still use Tor for everything else and read artifacts from disk.
 
-You could also build the artifacts data dir manuallyif e.g. the kohaku artifacts url is down/censored.
+You could also build the artifacts data dir manually if e.g. the kohaku artifacts url is down/censored.
 
 ## Disabling Tor
 
@@ -57,7 +63,11 @@ If Tor fails to start (e.g. corrupted Arti cache / “Unable to bootstrap a work
 kohaku clear-tor-cache
 ```
 
-The next Tor start re-downloads consensus (slower first bootstrap).
+The next Tor start re-downloads consensus (slower first bootstrap). To also wipe the public-sync HTTP cache:
+
+```bash
+kohaku clear-tor-cache --public-sync
+```
 
 ## Auditing with `view-network-traffic`
 
@@ -94,7 +104,8 @@ RPC rows always show as clearnet — that is expected. Watch for unexpected clea
 
 ## Related
 
+- [Fetch Sync Cache](./fetch-sync-cache.html) — prefetch saga / Subsquid history
 - [Fetch Artifacts](./fetch-artifacts.html) — pre-warm proving keys
-- [Set Env](./env.html) — `RPC_URL`, `KOHAKU_WITHOUT_TOR`, `KOHAKU_ARTIFACTS_BASE_URL`, `KOHAKU_TOR_CDN_TIMEOUT_MS`
+- [Set Env](./env.html) — `RPC_URL`, `KOHAKU_WITHOUT_TOR`, sync-cache / artifact env vars
 - [Full Commands Reference](./commands.html) — full `view-network-traffic` / `--without-tor` flag reference
 - [Unshield Funds](./unshield.html) — why Pimlico traffic matters for withdrawals

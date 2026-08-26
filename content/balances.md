@@ -10,6 +10,8 @@ kohaku balances
 
 You will pick your wallet (if you have more than one), enter the password, and wait for a short sync.
 
+The **first** Tornado / Railgun sync can take a while (paging saga / Subsquid history). Prefetch that snapshot once with [`fetch-sync-cache`](./fetch-sync-cache.html) so most of it comes from disk; later runs only catch up what is new. Privacy Pools first-sync is not covered by that cache.
+
 You should see:
 
 - **Public** — ETH / ERC20 tokens sitting on your addresses, potentially linked to whoever sent them. (Only the top 25-50 tokens show up automatically you can scan for custom tokens with a `--tokens` flag)

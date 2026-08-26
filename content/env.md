@@ -40,24 +40,23 @@ export RPC_URL=https://rpc.ankr.com/eth/some-api-key
 
 You are then entrusting that provider with privacy-critical information (addresses you query, how they cluster together, network metadata). Prefer a local node when you can OR a local process that can mirror local node functionality (a project i hope to work on!)
 
-## Optional: proving artifacts
+## Recommended: public-sync cache
 
-Railgun / Tornado keys cache under `<dataDir>/proving-artifacts`. You can load them all with [`fetch-artifacts`](./fetch-artifacts.html).
-
-(In fact, while setting everything up, now is a great time to chek out [`fetch-artifacts`](./fetch-artifacts.html) and locally store all the artifacts you'll need for the future)
-
-Here are optional env vars you can configure related to that:
+The first Tornado / Railgun sync (`balances`, `shield`, `unshield`) pages a lot of **public** history over the network (saga CDN + Railgun Subsquid). Prefetch that snapshot now to make first protocol **syncs significantly faster** :
 
 ```bash
-# remote base (default shown)
-export KOHAKU_ARTIFACTS_BASE_URL=https://artifacts.0000000000.org
-
-# large Tor GET budget in ms (default 45000)
-export KOHAKU_TOR_CDN_TIMEOUT_MS=45000
-
-# per-request Tor logs
-export KOHAKU_TOR_DEBUG=1
+kohaku fetch-sync-cache
 ```
+
+This is the more important setup step — event sync does **not** need proving keys. Details: [`fetch-sync-cache`](./fetch-sync-cache.html).
+
+Cache lives under `<dataDir>/public-sync-cache`. Wipe with `kohaku clear-tor-cache --public-sync`.
+
+## Optional: proving artifacts
+
+Railgun / Tornado **proving keys** cache under `<dataDir>/proving-artifacts`. You need them later for prove / unshield — not for the first `balances` sync. Load them with [`fetch-artifacts`](./fetch-artifacts.html).
+
+(While setting everything up, now is also a good time to run [`fetch-artifacts`](./fetch-artifacts.html) so those keys are on disk before you unshield.)
 
 ## Optional: `KOHAKU_WITHOUT_TOR`
 

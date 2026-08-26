@@ -39,7 +39,7 @@ Then check:
 kohaku --version
 ```
 
-should output: `0.0.3` (latest)
+should output: `0.0.4` (latest)
 
 Writing `kohaku` file to any directory on your PATH works. E.g. You could also write kohaku binary to `~/.local/bin` with:
 

@@ -8,7 +8,9 @@ Sometimes you do not want the full unshield amount sitting idle on a fresh addre
 
 This is the preferred path when you can build calldata without a dapp frontend. See [Using Dapps](./dapps.html) for how it ranks against [transact-raw](./transact-raw.html) and the [browser](./dapps-with-browser.html) fallback.
 
-(Note: currently this only works with Tornado Cash unshields, not the other Privacy Protocols. Below we assume `DEFAULT_PRIVACY_PROTOCOL=tornado` or else add the `--protocol tornado` flag to commands.)
+From 0.0.4, `--tail-calls` works on **Tornado and Railgun**, including ERC-20 unshields and stored stealth recipients (`--to s0`). Privacy Pools still has no tails. Below we assume `DEFAULT_PRIVACY_PROTOCOL=tornado` (or else add `--protocol tornado`).
+
+Tornado tails require `--next`, a **stored** public HD `--to`, or a stored stealth `--to` (`sN`). Do **not** pass a peeked / custom address as `--to` together with `--tail-calls` — peek to learn the next address, then unshield with `--next`. ERC-20 tails cannot include `msg.value`.
 
 ## Peek the destination first
 

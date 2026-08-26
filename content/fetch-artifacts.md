@@ -1,13 +1,15 @@
 ---
 title: Fetch Artifacts
-order: 20
+order: 21
 section: appendix
 summary: Pre-download Railgun + Tornado proving keys into the local cache
 ---
 
-Shield / unshield / private sync need **proving artifacts** (circuit keys). From 0.0.3 those live under `<dataDir>/proving-artifacts` (default `~/.kohaku-cli/proving-artifacts`). When a file is missing, the CLI fetches it over **Tor** from `KOHAKU_ARTIFACTS_BASE_URL` — and **fails** if Tor cannot complete the download (no clearnet fallback).
+**Prove / unshield** need **proving artifacts** (circuit keys). Those live under `<dataDir>/proving-artifacts` (default `~/.kohaku-cli/proving-artifacts`). When a file is missing, the CLI fetches it over **Tor** from `KOHAKU_ARTIFACTS_BASE_URL` — and **fails** if Tor cannot complete the download (no clearnet fallback).
 
-`fetch-artifacts` pre-warms that cache so later private ops prove from disk.
+Event sync (`balances`, first shield) does **not** need these files — prefetch public history with [`fetch-sync-cache`](./fetch-sync-cache.html) instead.
+
+`fetch-artifacts` pre-warms the proving-key cache so later unshields prove from disk.
 
 ## Full set (recommended once)
 
@@ -25,7 +27,7 @@ If Tor is slow or unreliable for large GETs, you can fetch over clearnet **once*
 kohaku fetch-artifacts --without-tor
 ```
 
-That associates your IP with downloading kohaku proving artifacts. Afterward, shield/unshield/sync read from the local cache and stay Tor-only for other HTTP (except RPC). See [Network traffic](./network-traffic.html).
+That associates your IP with downloading kohaku proving artifacts. Afterward, prove / unshield read from the local cache and stay Tor-only for other HTTP (except RPC). See [Network traffic](./network-traffic.html).
 
 ## Narrow the download
 
@@ -55,12 +57,15 @@ Remote base URL: env `KOHAKU_ARTIFACTS_BASE_URL` (default `https://artifacts.000
 
 ## When to run it
 
-- After a fresh install / new data directory, **before** the first `balances --include …` / `shield` / `unshield` that needs proofs
+- After a fresh install / new data directory, **before** the first `unshield` (or any prove) that needs circuit keys
 - After clearing or moving `--dataDir`
 - When a private op fails with an artifact download / Tor CDN timeout — fix Tor (`clear-tor-cache` if needed) or re-run `fetch-artifacts`
 
+The public-sync snapshot is a separate cache — see [`fetch-sync-cache`](./fetch-sync-cache.html).
+
 ## Related
 
+- [Fetch Sync Cache](./fetch-sync-cache.html) — prefetch saga / Subsquid history
 - [Network Traffic](./network-traffic.html) — Tor-or-fail policy
 - [Set Env](./env.html) — artifact / Tor env vars
 - [Full Commands Reference](./commands.html) — full flag list
