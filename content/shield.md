@@ -31,6 +31,16 @@ kohaku shield --protocol tornado --token DAI --amount-formatted 1000 --broadcast
 
 For now these are the only relevant tokens with tornado pools, hopefully more tokens and amounts get bootstrapped and we'll add them to the CLI.
 
+## Inspect a shield without the tokens
+
+A normal dry-run **simulates** the transaction, so it fails if the sender does not hold the funds yet. Pass `--skip-sim` to still print the planned payloads — useful when you want the call data for a later [unshield `--tail-calls`](./tail-calls.html), or to inspect a shield from an address that is not funded yet:
+
+```bash
+kohaku shield --from 1 --amount-formatted 0.1 --skip-sim
+```
+
+`--skip-sim` is dry-run only (cannot be combined with `--broadcast`). Fees in `--non-interactive` JSON stay in the schema but are zeroed.
+
 ## Note sizes
 
 Tornado uses **fixed denomination notes**. For ETH, deposits must be an exact multiple of **0.1 ETH** (e.g. `0.1`, `1.3` — not `1.35`).
