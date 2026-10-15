@@ -1,16 +1,16 @@
 ---
 title: Unshield Tail Calls
-order: 10
+order: 11
 summary: Unshield and call a contract in one step
 ---
 
-Sometimes you do not want the full unshield amount sitting idle on a fresh address. With `--tail-calls`, the Tornado payout lands and then **immediately** runs one or more calls in the same flow — pay someone, hit a router, etc. — while any leftover stays on your fresh account.
+Sometimes you do not want the full unshield amount sitting idle on a fresh address. With `--tail-calls`, the payout lands and then **immediately** runs one or more calls in the same flow — pay someone, hit a router, etc. — while any leftover stays on your fresh account.
 
-This is the preferred path when you can build calldata without a dapp frontend. See [Using Dapps](./dapps.html) for how it ranks against [transact-raw](./transact-raw.html) and the [browser](./dapps-with-browser.html) fallback.
+This is the preferred path when you can build **custom** calldata without a dapp frontend. For a plain “pay exact `Y` to someone,” prefer [`private-transfer`](./private-transfer.html) instead. See [Using Dapps](./dapps.html) for the full preference order.
 
-From 0.0.4, `--tail-calls` works on **Tornado and Railgun**, including ERC-20 unshields and stored stealth recipients (`--to s0`). Privacy Pools still has no tails. Below we assume `DEFAULT_PRIVACY_PROTOCOL=tornado` (or else add `--protocol tornado`).
+`--tail-calls` works on **Tornado**, **Privacy Pools**, and **Railgun** (all submit ERC-4337 user ops), including ERC-20 unshields and stored stealth recipients (`--to s0`). Below we assume `DEFAULT_PRIVACY_PROTOCOL=tornado` (or else add `--protocol tornado` / `privacy-pools`).
 
-Tornado tails require `--next`, a **stored** public HD `--to`, or a stored stealth `--to` (`sN`). Do **not** pass a peeked / custom address as `--to` together with `--tail-calls` — peek to learn the next address, then unshield with `--next`. ERC-20 tails cannot include `msg.value`.
+Tornado and Privacy Pools tails require `--next`, a **stored** public HD `--to`, or a stored stealth `--to` (`sN`). That account is the EIP-7702 delegator: tails run there and leftover funds stay there. Do **not** pass a peeked / custom address as `--to` together with `--tail-calls` — peek to learn the next address, then unshield with `--next`. ERC-20 tails cannot include `msg.value`.
 
 ## Peek the destination first
 
@@ -42,7 +42,7 @@ kohaku unshield --next --amount-formatted 0.2 \
   --tail-calls 0xRecipient:0x:0x214e8348c4f0000
 ```
 
-This is the better version of a post-unshield [transfer](./transfer.html) when you already know the recipient and amount.
+This is the low-level form of [`private-transfer`](./private-transfer.html) — same shape (`unshield --next` + one transfer tail). Prefer `private-transfer` for plain pays; use `--tail-calls` when you need a custom target / payload.
 
 ## Example: pay someone in tokens
 

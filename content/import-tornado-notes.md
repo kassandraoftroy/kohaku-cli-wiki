@@ -1,6 +1,6 @@
 ---
 title: Import Tornado Notes
-order: 18
+order: 19
 section: appendix
 summary: Bring legacy Tornado Cash notes into a kohaku wallet on mainnet
 ---

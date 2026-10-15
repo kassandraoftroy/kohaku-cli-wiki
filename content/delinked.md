@@ -1,6 +1,6 @@
 ---
 title: Keeping Activity Delinked
-order: 14
+order: 15
 summary: Habits that keep addresses from collapsing into one identity
 ---
 

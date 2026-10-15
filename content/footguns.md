@@ -1,6 +1,6 @@
 ---
 title: Common Privacy Footguns
-order: 16
+order: 17
 summary: Easy mistakes that undo wallet privacy
 ---
 

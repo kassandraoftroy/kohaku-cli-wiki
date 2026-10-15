@@ -26,6 +26,7 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 - [Check Balances](./balances.html) — see your balances
 - [Shield Funds](./shield.html) — deposit into Tornado Cash
 - [Unshield Funds](./unshield.html) — withdraw to a fresh address
+- [Private Transfer](./private-transfer.html) — pay someone exact amount from private balance
 - [Using Dapps](./dapps.html) — how to approach post-unshield interactions
 - [Unshield Tail Calls](./tail-calls.html) — unshield and call a contract in one step
 - [Transfer Funds](./transfer.html) — send ETH or ERC-20s
@@ -43,4 +44,4 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 - [Fetch Sync Cache](./fetch-sync-cache.html) — prefetch Tornado/Railgun sync history
 - [Fetch Artifacts](./fetch-artifacts.html) — pre-download proving keys
 - [Network Traffic](./network-traffic.html) — Tor vs clearnet, and how to audit contacts
-- [Full Commands Reference](./commands.html) — full command reference (0.0.5)
+- [Full Commands Reference](./commands.html) — full command reference (0.0.8)

@@ -48,7 +48,8 @@ You should see Tornado private balance down and the new public address funded (m
 
 From here you can:
 
-- Prefer doing the next step **in the same unshield** with [tail calls](./tail-calls.html) when you already have calldata (or a plain pay)
+- Prefer [`private-transfer`](./private-transfer.html) when you just want to pay someone an exact amount from private balance (no manual calldata)
+- Prefer doing the next step **in the same unshield** with [tail calls](./tail-calls.html) when you already have custom calldata
 - [Transfer](./transfer.html) somewhere if funds are already on the fresh address
 - [Transact raw](./transact-raw.html) for contract calls after unshielding
 - [Use a dapp in the browser](./dapps-with-browser.html) only as a last resort

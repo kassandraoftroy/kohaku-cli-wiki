@@ -1,6 +1,6 @@
 ---
 title: Network Traffic
-order: 22
+order: 23
 section: appendix
 summary: Tor vs clearnet — what the CLI contacts and how to audit it
 ---
@@ -11,16 +11,16 @@ There is **no Tor→clearnet fallback**. Saga CDN and proving-artifact downloads
 
 ## What goes over Tor
 
-When you run `balances` (with private protocols), `shield`, `unshield`, `transfer`, `transact-raw`, name commands, Tornado note import/export, `fetch-sync-cache`, or `fetch-artifacts`, the CLI may contact:
+When you run `balances` (with private protocols), `shield`, `unshield`, `private-transfer`, `transfer`, `transact-raw`, name commands, Tornado note import/export, `fetch-sync-cache`, or `fetch-artifacts`, the CLI may contact:
 
 | Category | Examples | Path |
 |---|---|---|
-| **pimlico** | Bundler / paymaster for Tornado and Railgun UserOps | Tor (most critical for IP privacy) |
+| **pimlico** | Bundler / paymaster for Tornado, Privacy Pools, and Railgun UserOps | Tor (most critical for IP privacy) |
 | **subsquid** | Railgun indexer | Tor |
 | **ppoi** | Railgun PPOI | Tor |
-| **saga** | Tornado saga CDN | Tor-or-fail (no clearnet fallback) |
-| **artifacts** | Proving artifacts (`KOHAKU_ARTIFACTS_BASE_URL`) | Tor-or-fail when not already cached on disk |
-| **asp** / **fastrelay** | Privacy Pools | Tor |
+| **saga** | Tornado / Privacy Pools (mainnet) saga CDN | Tor-or-fail (no clearnet fallback) |
+| **artifacts** | Proving artifacts (`KOHAKU_ARTIFACTS_BASE_URL`, including `/privacy-pools/`) | Tor-or-fail when not already cached on disk |
+| **asp** | Privacy Pools ASP | Tor |
 | **other** | Misc `fetch` traffic | Tor |
 | **rpc** | Your `RPC_URL` (chain reads & sends) | **Always clearnet** |
 
@@ -30,11 +30,11 @@ First Tor bootstrap may take a few seconds. Set `KOHAKU_TOR_DEBUG=1` if you need
 
 Shared **Railgun Subsquid** and **Tornado saga** HTTP pages live under `<dataDir>/public-sync-cache` and speed up those syncs (`balances`, `shield`, `unshield`). Prefetch with [`fetch-sync-cache`](./fetch-sync-cache.html). Anything newer than the snapshot is still fetched live (Tor by default) and written through.
 
-Privacy Pools is **not** covered. Wipe the cache with `kohaku clear-tor-cache --public-sync`.
+Privacy Pools **mainnet** history comes from its saga CDN (sealed chunks are cached on the way); Sepolia Privacy Pools stays on bundled state + `eth_getLogs`. Wipe the public-sync cache with `kohaku clear-tor-cache --public-sync`.
 
 ## Proving artifacts cache
 
-Railgun / Tornado proving keys live under `<dataDir>/proving-artifacts`. On **prove / unshield**, the CLI serves from that cache when present; otherwise it fetches over Tor from `KOHAKU_ARTIFACTS_BASE_URL` (default `https://artifacts.0000000000.org`) — and **fails** if Tor cannot complete the download. Event sync does **not** need these files.
+Railgun / Tornado / Privacy Pools proving keys live under `<dataDir>/proving-artifacts`. On **prove / unshield**, the CLI serves from that cache when present; otherwise it fetches over Tor from `KOHAKU_ARTIFACTS_BASE_URL` (default `https://artifacts.0000000000.org`) — and **fails** if Tor cannot complete the download. Event sync does **not** need these files.
 
 Pre-warm with [`fetch-artifacts`](./fetch-artifacts.html) so unshields do not need a large Tor download mid-flow. Optionally use `kohaku fetch-artifacts --without-tor` for a **one-shot clearnet** download (that IP is then associated with fetching kohaku artifacts); later private ops still use Tor for everything else and read artifacts from disk.
 

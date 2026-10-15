@@ -1,8 +1,8 @@
 ---
 title: Fetch Artifacts
-order: 21
+order: 22
 section: appendix
-summary: Pre-download Railgun + Tornado proving keys into the local cache
+summary: Pre-download Railgun, Tornado, and Privacy Pools proving keys
 ---
 
 **Prove / unshield** need **proving artifacts** (circuit keys). Those live under `<dataDir>/proving-artifacts` (default `~/.kohaku-cli/proving-artifacts`). When a file is missing, the CLI fetches it over **Tor** from `KOHAKU_ARTIFACTS_BASE_URL` — and **fails** if Tor cannot complete the download (no clearnet fallback).
@@ -17,7 +17,7 @@ Event sync (`balances`, first shield) does **not** need these files — prefetch
 kohaku fetch-artifacts
 ```
 
-Downloads the full Railgun modern `.br` set (transact + POI) plus Tornado circuit/key — roughly **~260 MB**. Default route is Tor.
+Downloads the full Railgun modern `.br` set (transact + POI), Tornado circuit/key, and the six Privacy Pools circuit files — Railgun alone is roughly **~260 MB**. Default route is Tor.
 
 ## One-shot clearnet download
 
@@ -35,6 +35,9 @@ That associates your IP with downloading kohaku proving artifacts. Afterward, pr
 # Tornado only
 kohaku fetch-artifacts --tornado
 
+# Privacy Pools circuits only
+kohaku fetch-artifacts --privacy-pools
+
 # Specific Railgun variants + Tornado
 kohaku fetch-artifacts --variant 01x03 --poi 03x03 --tornado
 
@@ -44,16 +47,17 @@ kohaku fetch-artifacts railgun/01x03/proving_key.bin.br
 
 | Option / args | Description |
 |---|---|
-| *(none)* | Full Railgun modern `.br` set + Tornado circuit/key |
+| *(none)* | Full Railgun modern `.br` set + Tornado + Privacy Pools circuits |
 | `--variant <NNxMM>` | Railgun transact variant(s), e.g. `01x03` (repeatable) |
 | `--poi <NNxMM>` | POI variant(s): `03x03` or `13x13` (repeatable) |
 | `--tornado` | Tornado circuit JSON + proving key only |
+| `--privacy-pools` | Privacy Pools commitment + withdraw `wasm` / `vkey` / `zkey` only |
 | `[keys...]` | Explicit relative paths under the artifacts tree |
 | `--without-tor` | Download over clearnet |
 | `--dataDir <path>` | Data root (cache at `<dataDir>/proving-artifacts`) |
 | `--non-interactive` | JSON summary only |
 
-Remote base URL: env `KOHAKU_ARTIFACTS_BASE_URL` (default `https://artifacts.0000000000.org`). Large Tor GETs: `KOHAKU_TOR_CDN_TIMEOUT_MS` (default `45000`).
+Remote base URL: env `KOHAKU_ARTIFACTS_BASE_URL` (default `https://artifacts.0000000000.org`). Privacy Pools circuits live under `<base>/privacy-pools/`. Large Tor GETs: `KOHAKU_TOR_CDN_TIMEOUT_MS` (default `45000`).
 
 ## When to run it
 

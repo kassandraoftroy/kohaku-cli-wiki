@@ -1,6 +1,6 @@
 ---
 title: Dust Management
-order: 15
+order: 16
 summary: Deal with amounts too small for a Tornado note
 ---
 
@@ -16,15 +16,15 @@ Tornado only accepts **fixed note sizes**. Anything left over — e.g. `0.037 ET
 1. Prefer receiving amounts that already fit note sizes when you can influence the send.
 2. Shield every full note you can; leave dust parked on its original fresh address if it is tiny and inactive.
 3. When dust from **related** activity (same receive story) adds up toward a full note, shield that note.
-4. When you need to **accumulate unrelated dust** toward a full Tornado note without linking the source addresses on the public chain, use another privacy protocol such as **Railgun** as a temporary holding pool — then exit into a Tornado-sized shield when you have enough.
+4. When you need to **accumulate unrelated dust** toward a full Tornado note without linking the source addresses on the public chain, use **Privacy Pools** as a temporary holding pool (any amount at or above the pool minimum) — then exit into a Tornado-sized shield when you have enough. (For an asset with **no** Privacy Pools / Tornado pool, [Railgun](./commands.html) can shield arbitrary ERC-20s.)
 
 ```bash
-kohaku shield --protocol railgun --amount-formatted 0.03 --broadcast
+kohaku shield --protocol privacy-pools --amount-formatted 0.03 --broadcast
 # …repeat from other dust sources over time…
 
 # while funds sit in both places, check both:
-kohaku balances --include tornado,railgun
+kohaku balances --include tornado,privacy-pools
 
-# later: unshield from Railgun to a fresh address, then shield into Tornado
-kohaku unshield --protocol railgun --next --amount-max --broadcast
+# later: unshield from Privacy Pools to a fresh address, then shield into Tornado
+kohaku unshield --protocol privacy-pools --next --amount-max --broadcast
 ```

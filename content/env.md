@@ -18,7 +18,7 @@ export DEFAULT_PRIVACY_PROTOCOL=tornado
 
 This is a convenience environment variable, setting a single privacy protocol as the "default" to display balances for and interact with (so you don't have to use `--protocol` or `--include` for every command).
 
-If you want to use Railgun or Privacy Pools (V1) as the "default" protocol, simply set as `railgun` or `privacy-pools`.
+If you want **Privacy Pools** as the default instead, set `privacy-pools`. (Railgun is still available as `railgun` — useful when you need an arbitrary ERC-20 that has no Tornado / Privacy Pools pool.)
 
 ## Set RPC_URL
 
@@ -30,7 +30,7 @@ export RPC_URL=http://localhost:8545
 
 (this is the default so if your node is `localohst:8545` the var doesn't even need to be explicitly set)
 
-Everything else the CLI contacts (Pimlico, Subsquid, PPOI, saga, proving artifacts, ASP/fastrelay, …) goes through **Tor by default**. The Ethereum RPC is the deliberate exception: it stays on clearnet. That is fine when the RPC is local. If you use a remote provider instead, assume it can see which addresses you query and may already identify you via an API key — Tor would not help much there anyway. Details: [Network traffic](./network-traffic.html).
+Everything else the CLI contacts (Pimlico, Subsquid, PPOI, saga, proving artifacts, ASP, …) goes through **Tor by default**. The Ethereum RPC is the deliberate exception: it stays on clearnet. That is fine when the RPC is local. If you use a remote provider instead, assume it can see which addresses you query and may already identify you via an API key — Tor would not help much there anyway. Details: [Network traffic](./network-traffic.html).
 
 If you must use a remote RPC provider (Alchemy, Infura, Ankr, etc):
 
@@ -42,7 +42,7 @@ You are then entrusting that provider with privacy-critical information (address
 
 ## Recommended: public-sync cache
 
-The first Tornado / Railgun sync (`balances`, `shield`, `unshield`) pages a lot of **public** history over the network (saga CDN + Railgun Subsquid). Prefetch that snapshot now to make first protocol **syncs significantly faster** :
+The first Tornado / Railgun sync (`balances`, `shield`, `unshield`) pages a lot of **public** history over the network (saga CDN + Railgun Subsquid). Prefetch that snapshot now to make first protocol **syncs significantly faster**:
 
 ```bash
 kohaku fetch-sync-cache
@@ -54,7 +54,7 @@ Cache lives under `<dataDir>/public-sync-cache`. Wipe with `kohaku clear-tor-cac
 
 ## Optional: proving artifacts
 
-Railgun / Tornado **proving keys** cache under `<dataDir>/proving-artifacts`. You need them later for prove / unshield — not for the first `balances` sync. Load them with [`fetch-artifacts`](./fetch-artifacts.html).
+Railgun / Tornado / Privacy Pools **proving keys** cache under `<dataDir>/proving-artifacts`. You need them later for prove / unshield — not for the first `balances` sync. Load them with [`fetch-artifacts`](./fetch-artifacts.html) (Privacy Pools alone: `fetch-artifacts --privacy-pools`).
 
 (While setting everything up, now is also a good time to run [`fetch-artifacts`](./fetch-artifacts.html) so those keys are on disk before you unshield.)
 

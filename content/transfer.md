@@ -1,12 +1,12 @@
 ---
 title: Transfer Funds
-order: 11
+order: 12
 summary: Send ETH or ERC-20s from a public account
 ---
 
 Once funds are on a public account (usually after an [unshield](./unshield.html)), you can move them with the CLI.
 
-If you already know the recipient and amount **before** unshielding, prefer attaching the payment as a [tail call](./tail-calls.html) so the fresh address never sits idle with the full note. Use `transfer` when you already unshielded, or when you decide the destination only afterward.
+If you already know the recipient and amount **before** unshielding, prefer [`private-transfer`](./private-transfer.html) (exact pay) or a [tail call](./tail-calls.html) (custom calldata) so the fresh address never sits idle with the full note. Use `transfer` when you already unshielded, or when you decide the destination only afterward.
 
 ## Simple transfers
 
@@ -54,5 +54,5 @@ You can also pass a raw `st:…` meta URI as `--to` with `--stealth`.
 
 A transfer from account A to account B **publicly links** them. Sending between your own kohaku accounts is still a link. If those accounts were meant to stay separate, you just undid that — see [Keeping activity delinked](./delinked.html).
 
-Prefer: unshield → pay the external destination directly (or use [tail calls](./tail-calls.html)) rather than hopping through several of your own addresses. Stealth transfers (`--stealth`) avoid linking the payment to a reused recipient address — the receiver still discovers it with `balances`.
+Prefer: [`private-transfer`](./private-transfer.html) / [tail calls](./tail-calls.html) straight to the external destination rather than hopping through several of your own addresses. Stealth transfers (`--stealth`) avoid linking the payment to a reused recipient address — the receiver still discovers it with `balances`.
 

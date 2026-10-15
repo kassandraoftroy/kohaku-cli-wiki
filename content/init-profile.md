@@ -86,7 +86,7 @@ In interactive mode, `--name` / `--no-name` are optional (the CLI prompts). With
 
 - **Do** advertise the name / stealth meta-address as your inbox
 - **Do** receive via stealth / fresh addresses, then [shield](./shield.html)
-- **Don’t** route Tornado / Railgun exits, dapp sessions, or consolidation through index `0`
+- **Don’t** route Tornado / Privacy Pools exits, dapp sessions, or consolidation through index `0`
 - **Don’t** mix “known public face” txs with addresses you meant to keep unlinked — see [Keeping activity delinked](./delinked.html)
 
 Next: [Receive Funds](./receive.html) on fresh addresses for money you intend to shield.

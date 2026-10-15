@@ -1,6 +1,6 @@
 ---
 title: Fetch Sync Cache
-order: 20
+order: 21
 section: appendix
 summary: Prefetch Railgun Subsquid + Tornado saga history so first syncs start from disk
 ---
@@ -11,7 +11,7 @@ The first `balances` / `shield` / `unshield` on a fresh wallet has to page a lot
 
 This is **not** proving keys. Event sync does not need [`fetch-artifacts`](./fetch-artifacts.html). Artifacts are for prove / unshield later.
 
-Privacy Pools is **not** in the snapshot (cold sync is bundled state JSON + `eth_getLogs`, which never goes through this HTTP cache). Its first sync stays slow.
+Privacy Pools **mainnet** history is fetched live from its saga CDN (sealed chunks are cached on the way). Sepolia Privacy Pools has no saga stream, so it stays on bundled state JSON plus `eth_getLogs`.
 
 ## Prefetch once (recommended)
 
@@ -47,6 +47,7 @@ kohaku clear-tor-cache --public-sync
 - After a fresh install / new data directory, **before** the first `balances --include …` / `shield` / `unshield` (especially on mainnet)
 - After `clear-tor-cache --public-sync` or moving `--dataDir`
 - When a first-time Tornado / Railgun sync is painfully slow over Tor — prefetch, then retry
+- Privacy Pools mainnet saga pages are filled live / cached separately; this snapshot still speeds Tornado + Railgun
 
 Exits non-zero if any chunk ultimately failed. Entries that did land are still valid — re-run to retry the rest.
 

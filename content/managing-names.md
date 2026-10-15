@@ -1,6 +1,6 @@
 ---
 title: Managing Ethereum Names
-order: 19
+order: 20
 section: appendix
 summary: Renew, transfer, and update records on .eth / .gwei / .wei names
 ---

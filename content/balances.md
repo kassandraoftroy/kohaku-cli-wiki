@@ -10,7 +10,7 @@ kohaku balances
 
 You will pick your wallet (if you have more than one), enter the password, and wait for a short sync.
 
-The **first** Tornado / Railgun sync can take a while (paging saga / Subsquid history). Prefetch that snapshot once with [`fetch-sync-cache`](./fetch-sync-cache.html) so most of it comes from disk; later runs only catch up what is new. Privacy Pools first-sync is not covered by that cache.
+The **first** Tornado / Railgun sync can take a while (paging saga / Subsquid history). Prefetch that snapshot once with [`fetch-sync-cache`](./fetch-sync-cache.html) so most of it comes from disk; later runs only catch up what is new. Privacy Pools **mainnet** history comes from its own saga CDN (sealed chunks are cached on the way); Sepolia Privacy Pools still uses bundled state + `eth_getLogs`.
 
 You should see:
 
@@ -26,7 +26,7 @@ kohaku balances --verbose
 If you would like to see private blances from other protocols than your default, or multiple privacy protocols at once:
 
 ```bash
-kohaku balances --include railgun,privacy-pools,tornado
+kohaku balances --include privacy-pools,tornado
 ```
 
 ## Reading the result

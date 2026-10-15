@@ -31,6 +31,12 @@ kohaku shield --protocol tornado --token DAI --amount-formatted 1000 --broadcast
 
 For now these are the only relevant tokens with tornado pools, hopefully more tokens and amounts get bootstrapped and we'll add them to the CLI.
 
+**Privacy Pools** accepts any amount at or above the pool minimum (mainnet: ETH, USDC, USDT) — useful for dust that does not fit a Tornado note. For an **arbitrary ERC-20** with no Tornado / Privacy Pools pool, Railgun can shield it:
+
+```bash
+kohaku shield --protocol railgun --token 0xYourToken --amount-formatted 10 --broadcast
+```
+
 ## Inspect a shield without the tokens
 
 A normal dry-run **simulates** the transaction, so it fails if the sender does not hold the funds yet. Pass `--skip-sim` to still print the planned payloads — useful when you want the call data for a later [unshield `--tail-calls`](./tail-calls.html), or to inspect a shield from an address that is not funded yet:

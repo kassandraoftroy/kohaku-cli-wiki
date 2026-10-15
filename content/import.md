@@ -1,6 +1,6 @@
 ---
 title: Import Wallet
-order: 17
+order: 18
 section: appendix
 summary: Restore a wallet from an existing seed phrase
 ---
