@@ -35,6 +35,7 @@ kohaku private-transfer --to 0xFriend --token DAI --amount-formatted 50 --broadc
 ## Protocol notes
 
 - **Tornado** — the paymaster fee comes from the unshielded notes, so the CLI unshields the smallest note sum that covers the transfer **plus** that fee. Sending exactly `0.1 ETH` from `0.1` notes typically unshields `0.2`; the tail pays `0.1` and the remainder stays on the fresh account.
+- **Tornado pool choice** — extended ETH denominations are enabled by default, but their anonymity sets may be much smaller. Add `--exclude-new-pools` to spend only classic pools. This does not change sync or balances.
 - **Privacy Pools** — unshields the exact transfer amount; the paymaster fee is taken from private balance on top. The fresh account is the EIP-7702 delegate and refund recipient, so unused-gas change does **not** go to `--to`.
 - **Railgun** — same “exact transfer” idea; treasury fee is added on top, and bundler gas is paid from shielded WETH.
 

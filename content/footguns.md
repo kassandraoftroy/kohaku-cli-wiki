@@ -15,12 +15,13 @@ A short list of ways people accidentally deanonymize themselves. Skim it once; r
 - **Transferring between your own “anonymous” accounts** — permanent public link. Be extremely careful, if you need to consolidate "dust" funds, don't do this naively [see here](./dust.html)
 - **One long-lived address for “all private DeFi”** — a biography in transaction form
 - **Matching Custom Shield/Unshield Amounts** - If you shield 11.1 ETH from a public address and later unshield exactly 11.1 ETH to a new public address these matching amounts create an extremely high liklihood that you are the same person. Less severe but similar idea if you shield unshield 0.3 ETH (three correlated notes on the 0.1 pool).
+- **Assuming new Tornado denominations are equally private** — the extended ETH pools are enabled by default but can have much smaller anonymity sets. Check the pool before shielding or spending; `--exclude-new-pools` restricts Tornado operations to classic pools.
 
 ## Tooling & metadata
 
 - **Remote RPC endpoint** — the provider sees which addresses and state you query, and any txs you submit to the standard mempool; prefer a local node for true privacy ([Set Env](./env.html))
 - **Checking etherscan links from your home IP** - use `balances` command rather than etherscan and when you do check etherscan on activity that you want to keep unlinked, use Tor or a VPN.
-- **Disabling Tor on privacy HTTP** — Pimlico and other endpoints see your home IP; leave Tor on unless you know why ([Network traffic](./network-traffic.html)). Saga / artifacts do not fall back to clearnet anymore — if Tor fails, the op fails. Prefetch sync history with [`fetch-sync-cache`](./fetch-sync-cache.html) and proving keys with [`fetch-artifacts`](./fetch-artifacts.html) if large Tor downloads are flaky.
+- **Disabling Tor on privacy HTTP** — Pimlico and other endpoints see your home IP; leave Tor on unless you know why ([Network traffic](./network-traffic.html)). Saga requests do not fall back to clearnet — if Tor fails, the op fails. Prefetch sync history with [`fetch-sync-cache`](./fetch-sync-cache.html) if large Tor downloads are flaky. Proving circuits are bundled.
 - **Importing an unlinked EOA key into a daily browser wallet** — now you link the existing browser wallet activity to this key ([Dapps in Browser](./dapps-with-browser.html))
 - **Leaving exported keys or seed phrase in terminal scrollback or screenshots** - Just be careful whenever exporting private keys or revealing the seed - close that terminal session when you're done and get the sensitive material off your copy clipboard.
 

@@ -24,6 +24,7 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 - [Init Profile](./init-profile.html) — name + stealth inbox on index 0
 - [Receive Funds](./receive.html) — receive funds from yourself or others
 - [Check Balances](./balances.html) — see your balances
+- [Activity](./activity.html) — see transactions submitted by this CLI
 - [Shield Funds](./shield.html) — deposit into Tornado Cash
 - [Unshield Funds](./unshield.html) — withdraw to a fresh address
 - [Private Transfer](./private-transfer.html) — pay someone exact amount from private balance
@@ -40,8 +41,9 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 
 - [Import Wallet](./import.html) — import an existing seed phrase
 - [Import Tornado Notes](./import-tornado-notes.html) — bring legacy Tornado notes into kohaku
+- [Privacy Pools Ragequit](./ragequit.html) — exit an unapproved note to its depositor
 - [Managing Ethereum Names](./managing-names.html) — renew, transfer, text records, website
 - [Fetch Sync Cache](./fetch-sync-cache.html) — prefetch Tornado/Railgun sync history
-- [Fetch Artifacts](./fetch-artifacts.html) — pre-download proving keys
+- [Proving Artifacts](./fetch-artifacts.html) — circuits are bundled with the CLI
 - [Network Traffic](./network-traffic.html) — Tor vs clearnet, and how to audit contacts
-- [Full Commands Reference](./commands.html) — full command reference (0.0.8)
+- [Full Commands Reference](./commands.html) — full command reference (0.0.12)

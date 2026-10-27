@@ -17,6 +17,8 @@ npm run build
 
 (requires **Node.js 22+**)
 
+`npm install` includes the Railgun, Tornado, and Privacy Pools proving circuits through `kohaku-artifacts`. You do not need to run a separate artifact download command.
+
 > **Note:** for linux users you may get error on `npm run build` if so just follow the instructions from the error ("try `npm i` again after removing both package-lock.json and node_modules directory")
 
 At this point you _could_ simply use `npm run dev:prod --` as the prefix to commands (e.g. `npm run dev:prod -- --version`) but you can only invoke the kohaku-cli from inside the root folder of the repo.
@@ -39,7 +41,7 @@ Then check:
 kohaku --version
 ```
 
-should output: `0.0.8` (latest)
+should output: `0.0.12` (for this guide)
 
 Writing `kohaku` file to any directory on your PATH works. E.g. You could also write kohaku binary to `~/.local/bin` with:
 

@@ -9,7 +9,7 @@ The first `balances` / `shield` / `unshield` on a fresh wallet has to page a lot
 
 `fetch-sync-cache` downloads a published snapshot of those pages so later syncs replay most of the history **from disk** instead of paging it over Tor. Anything newer than the snapshot is still fetched live and written through, so the cache stays current as you use it.
 
-This is **not** proving keys. Event sync does not need [`fetch-artifacts`](./fetch-artifacts.html). Artifacts are for prove / unshield later.
+This is **public sync history**, not proving keys. Proving circuits are bundled with the CLI and need no separate download.
 
 Privacy Pools **mainnet** history is fetched live from its saga CDN (sealed chunks are cached on the way). Sepolia Privacy Pools has no saga stream, so it stays on bundled state JSON plus `eth_getLogs`.
 
@@ -34,7 +34,7 @@ export KOHAKU_SYNC_CACHE_CHUNK_TIMEOUT_MS=300000
 export KOHAKU_PUBLIC_SYNC_CACHE_MAX_BYTES=1073741824
 ```
 
-Chunk URLs are excluded from proving-artifact routing, so the 45s `KOHAKU_TOR_CDN_TIMEOUT_MS` cap does **not** apply to them.
+The per-chunk timeout is `KOHAKU_SYNC_CACHE_CHUNK_TIMEOUT_MS` (default 300000 ms).
 
 The cache **never evicts**: at the byte ceiling, new responses stop being stored instead of deleting snapshot pages. Wipe it with:
 
@@ -55,7 +55,7 @@ Full flags (including publisher `--pack`): [Full Commands Reference](./commands.
 
 ## Related
 
-- [Set Env](./env.html) — sync-cache / artifacts env vars
-- [Fetch Artifacts](./fetch-artifacts.html) — proving keys (prove / unshield), a separate cache
+- [Set Env](./env.html) — sync-cache env vars
+- [Proving Artifacts](./fetch-artifacts.html) — bundled proving circuits
 - [Network Traffic](./network-traffic.html) — Tor vs clearnet
 - [Check Balances](./balances.html) — first private sync uses this cache

@@ -2,10 +2,10 @@
 title: Full Commands Reference
 order: 24
 section: appendix
-summary: Full command reference for kohaku-cli 0.0.8
+summary: Full command reference for kohaku-cli 0.0.12
 ---
 
-Synced with the [kohaku-cli README](https://github.com/kassandraoftroy/kohaku-cli) for **0.0.8**. Flags may still evolve — when in doubt, run `kohaku help` or `kohaku <command> --help`.
+Synced with the [kohaku-cli README](https://github.com/kassandraoftroy/kohaku-cli) for **0.0.12**. Flags may still evolve — when in doubt, run `kohaku help` or `kohaku <command> --help`.
 
 ## Commands Summary
 
@@ -19,11 +19,13 @@ Synced with the [kohaku-cli README](https://github.com/kassandraoftroy/kohaku-cl
 | `export-private-key` | Print one account’s private key to stdout |
 | `reveal-seed-phrase` | Decrypt and print the wallet BIP-39 mnemonic |
 | `balances` | Public + private balances; stealth announcement scan (`--skip-stealth-scan`) |
+| `activity` | View encrypted local history of CLI transaction submissions |
 | `transfer` | Send ETH or ERC-20 from a public account |
 | `transact-raw` | Submit raw calldata (multi-call → EIP-7702 UserOp) |
 | `shield` | Deposit from a public account into a privacy protocol |
 | `unshield` | Withdraw private balance (`--next`, `--to s0`, `--tail-calls` on Tornado + Privacy Pools + Railgun) |
 | `private-transfer` | Unshield through a fresh account and pay exact amount to `--to` |
+| `ragequit` | Exit one unapproved Privacy Pools note to its original depositor |
 | `import-tornado-note` | Import legacy Tornado note string(s) |
 | `export-tornado-note` | Export unspent Tornado note secret(s) |
 | `register-name` | Register a `.eth` / `.gwei` / `.wei` name |
@@ -33,7 +35,6 @@ Synced with the [kohaku-cli README](https://github.com/kassandraoftroy/kohaku-cl
 | `set-name-website` | Set contenthash / website (`ipfs://` / `bzz://`) |
 | `set-name-reverse-record` | Set primary reverse record for an account |
 | `fetch-sync-cache` | Prefetch Railgun Subsquid + Tornado saga HTTP snapshot |
-| `fetch-artifacts` | Pre-download Railgun + Tornado + Privacy Pools proving artifacts |
 | `view-network-traffic` | Review what the CLI contacted (Tor vs clearnet) |
 | `clear-tor-cache` | Delete tor-js Arti cache (`--public-sync` also wipes sync cache) |
 | `see-stealth-meta-address` | Print this wallet’s stealth meta-address URI |
@@ -57,14 +58,15 @@ Global behavior:
 | **`--password-file <path>`** | Preferred for automation on POSIX. Reads the wallet password from a regular, non-symlink file owned by the current user with mode `0400` or `0600`. Mutually exclusive with `--password`. |
 | **`--password <password>`** | Legacy wallet unlock input. A literal string or existing file path is accepted for compatibility; prefer `--password-file` in scripts. |
 | **`--without-tor`** | Disable Tor for non-RPC HTTP (default: Tor on for private-protocol and Pimlico-backed commands, including `transfer` / `transact-raw` / names). Or set `KOHAKU_WITHOUT_TOR=1`. Ethereum RPC stays clearnet. Review contacts with `view-network-traffic`. |
-| **Proving artifacts** | Railgun, Tornado, and Privacy Pools keys live under `<dataDir>/proving-artifacts`. Pre-warm with `fetch-artifacts`. Remote base: `KOHAKU_ARTIFACTS_BASE_URL` (default `https://artifacts.0000000000.org`). Privacy Pools circuits are fetched from `<base>/privacy-pools/`. Large Tor GETs: `KOHAKU_TOR_CDN_TIMEOUT_MS` (default `45000`). Debug: `KOHAKU_TOR_DEBUG=1`. |
+| **Proving artifacts** | Railgun, Tornado, and Privacy Pools circuits install with the CLI through `kohaku-artifacts`. No separate fetch is needed; `fetch-artifacts` was removed in 0.0.10. |
+| **Railgun POI override** | `KOHAKU_RAILGUN_FORCE_VALID_POI=1` treats missing PPOI statuses as valid in the client. Off by default; use only if you understand that this bypasses the client's POI filter. |
 | **Public-sync cache** | Shared **Railgun Subsquid** and saga HTTP pages live under `<dataDir>/public-sync-cache` and speed up those syncs (`balances`, `shield`, `unshield`). Prefetch with `fetch-sync-cache`. Snapshot base: `KOHAKU_SYNC_CACHE_BASE_URL` (default `https://artifacts.0000000000.org/sync-cache/v1`). Snapshot is historical; live HTTP still fills anything newer. Privacy Pools **mainnet** history comes from the saga CDN with only the tip from `eth_getLogs`. Sepolia Privacy Pools has no saga stream, so it stays on bundled state plus `eth_getLogs`. Never evicts — at `KOHAKU_PUBLIC_SYNC_CACHE_MAX_BYTES` (default 1 GiB) new pages stop being stored instead. Wipe with `kohaku clear-tor-cache --public-sync`. |
 
 ---
 
 ### `create-wallet <name>`
 
-Create a BIP-39 seed wallet encrypted on disk. The `<name>` argument is a single token (no spaces) and cannot be `proving-artifacts` or `public-sync-cache` (those are cache directories under `--dataDir`).
+Create a BIP-39 seed wallet encrypted on disk. The `<name>` argument is a single token (no spaces) and cannot be `proving-artifacts` or `public-sync-cache` (reserved data directory names).
 
 **New seed:** records the current chain tip in `.stealth-start-block` so later `balances` stealth scans do not walk announcement history from before the wallet existed. Uses `--rpc-url` / `RPC_URL` when set; otherwise a public RPC for mainnet or Sepolia (`--testnet`).
 
@@ -210,7 +212,7 @@ kohaku reveal-seed-phrase --wallet testWallet
 
 ### `balances`
 
-Show aggregated **public** balances (ETH + default ERC-20s for the chain, plus any private tokens discovered), and **private** balances for the protocols you select. Also prints the wallet **profile** name (reverse-resolved for HD index 0, if any; JSON: `wallet_profile_name`). Use `see-stealth-meta-address` for the stealth meta URI.
+Show aggregated **public** balances (ETH + default ERC-20s for the chain, plus any private tokens discovered), and **private** balances for the protocols you select. Older Tornado and Privacy Pools notes appear as legacy when present. Tornado balances include extended pools even when operations use `--exclude-new-pools`. Also prints the wallet **profile** name (reverse-resolved for HD index 0, if any; JSON: `wallet_profile_name`). Use `see-stealth-meta-address` for the stealth meta URI.
 
 By default, private balances are included only for `DEFAULT_PRIVACY_PROTOCOL` (if set). Otherwise only public balances are shown, with a short warning. Pass `--include` to sync one or more protocols explicitly (required for multiple protocols at once, or for any private balance when the env is unset).
 
@@ -224,7 +226,7 @@ By default, private balances are included only for `DEFAULT_PRIVACY_PROTOCOL` (i
 | `--include <protocols>` | Comma-separated private protocols to sync (`railgun`, `privacy-pools`, `tornado`). Default: `DEFAULT_PRIVACY_PROTOCOL` only, or none if unset. |
 | `--verbose` | Human: per-address public breakdown + private note list for included protocols. JSON: adds `public_account_indexes_by_address` and `private_notes`. |
 | `--tokensList <addrs>` | Extra ERC-20 addresses (comma- or space-separated), merged with chain defaults. |
-| `--without-tor` | Disable Tor for privacy HTTP when syncing private protocols (default: Tor on). Covers Railgun Subsquid/PPOI, Tornado saga/artifacts, Privacy Pools ASP, etc. RPC stays clearnet. Or set `KOHAKU_WITHOUT_TOR=1`. |
+| `--without-tor` | Disable Tor for privacy HTTP when syncing private protocols (default: Tor on). Covers Railgun Subsquid/PPOI, Tornado saga, Privacy Pools ASP, etc. RPC stays clearnet. Or set `KOHAKU_WITHOUT_TOR=1`. |
 | `--stealth-start-block <block>` | Floor for the ERC-5564 announcement **scan** (decimal or `0x`-hex); skips older history on first/full scan. Can back-date below the wallet `.stealth-start-block` (often the creation/import tip; as far as the announcer deploy block). When omitted, uses that file if present, otherwise the Kohaku import default (mainnet `25700000`, Sepolia `11455454`). Not a way to skip scanning. |
 | `--skip-stealth-scan` | Skip announcement discovery for this run. **Already-imported** stealth accounts still appear in public balances. |
 | `--non-interactive` | JSON only; requires `--wallet` and `--password`. |
@@ -242,6 +244,24 @@ kohaku balances --wallet testWallet --include railgun,tornado --verbose
 kohaku balances --wallet testWallet --verbose --include privacy-pools --tokensList 0xYourToken
 kohaku balances --wallet testWallet --include tornado --without-tor
 kohaku balances --wallet testWallet --skip-stealth-scan
+```
+
+---
+
+### `activity`
+
+Show this wallet's encrypted local CLI transaction history, newest first. Requires the wallet password but no RPC or protocol sync. Records start with v0.0.12; dry runs and transactions from other tools are absent. A timed-out receipt stays `submitted`; this command does not poll or refresh its status.
+
+| Option | Description |
+|--------|-------------|
+| `--wallet <name>` | Wallet (interactive picker if omitted). |
+| `--password <password>` / `--password-file <path>` | Unlock password. |
+| `--non-interactive` | Print versioned JSON with `wallet` and `activity`. |
+| `--dataDir <path>` | Data root. |
+
+```bash
+kohaku activity --wallet testWallet
+kohaku activity --wallet testWallet --password-file ./wallet-password --non-interactive
 ```
 
 ---
@@ -325,7 +345,8 @@ Move funds from a **public** account into a private protocol.
 | `--token <address\|eth>` | Token (default: `eth`). |
 | `--amount-wei <n>` | Amount in base units. |
 | `--amount-formatted <decimal>` | Human amount (uses token decimals). |
-| `--amount-max` | Shield the maximum spendable amount. ETH: balance minus estimated gas. ERC-20: full token balance (ETH must still cover gas). Tornado: floored to a multiple of the smallest pool denomination; if gas then knocks the amount below a step, the CLI drops one step and rebuilds. Provide at most one of `--amount-wei`, `--amount-formatted`, or `--amount-max`. |
+| `--amount-max` | Shield the maximum spendable amount. ETH: balance minus estimated gas. ERC-20: full token balance (ETH must still cover gas). Tornado: floored to a multiple of the smallest pool denomination (0.01 ETH by default; 0.1 ETH with `--exclude-new-pools`); if gas then knocks the amount below a step, the CLI drops one step and rebuilds. Provide at most one of `--amount-wei`, `--amount-formatted`, or `--amount-max`. |
+| `--exclude-new-pools` | Tornado only: use classic pools for this shield. New ETH denominations may have small anonymity sets. Sync and balances still include all pools. |
 | `--rpc-url <url>` | RPC endpoint. |
 | `--broadcast` | Sign and send on-chain. **Omit** for dry-run (transaction JSON only). |
 | `--skip-sim` | Dry-run only: skip `eth_call` / UserOp simulation and fee estimates. `fees` stay in `--non-interactive` JSON but are zeroed. Cannot be combined with `--broadcast`. Use this for counterfactual senders (no balance) so you can still print payloads for later `--tail-calls`. |
@@ -340,7 +361,7 @@ Move funds from a **public** account into a private protocol.
 
 - **privacy-pools** — Any asset the entrypoint has a pool for (mainnet: ETH, USDC, USDT; Sepolia: ETH). Any amount at or above that pool's minimum deposit. The vetting fee is deducted from the deposit and shown in the fee preview.
 - **railgun** — ETH and ERC-20 (any token); non-ETH may need an approval. Approval + shield (2+ calls) are submitted as **one EIP-7702 UserOp** via Pimlico.
-- **tornado** — ETH and ERC-20 tokens in the static pool catalog (`src/utils/tornado-pools.ts`; mainnet and Sepolia differ). Amount must be an exact multiple of the smallest pool denomination for that asset. Multi-denomination deposits (and any ERC-20 approvals) are batched into **one EIP-7702 UserOp**. Approvals are aggregated per pool (e.g. 2×1000 + 5×100 → approve 2000 and 500, not seven separate approves).
+- **tornado** — ETH and ERC-20 tokens in the SDK pool catalog supported by the direct paymaster (mainnet and Sepolia differ). Pools without SDK paymaster support, including cDAI, are unavailable. The CLI validates destination pools and approvals before signing. Extended ETH denominations are enabled by default: 0.01, 0.03, 0.3, 3, and 30 ETH, plus 10 ETH on Sepolia. **These new pools may have much smaller anonymity sets.** The smallest ETH step is 0.01 by default, or 0.1 with `--exclude-new-pools`. Multi-denomination deposits (and any ERC-20 approvals) are batched into **one EIP-7702 UserOp**.
 
 When a shield needs more than one on-chain call, the CLI uses EIP-7702 Simple7702Account (`0xe6Cae83B…855B`) the same way as `transact-raw`.
 
@@ -372,21 +393,22 @@ Withdraw **private** balance to a **public** address. Railgun, Tornado Cash, and
 | `--token <address\|eth>` | Token (default: `eth`). |
 | `--amount-wei <n>` | Amount in base units. |
 | `--amount-formatted <decimal>` | Human amount. |
-| `--amount-max` | Maximum spendable amount (Railgun and Privacy Pools: after estimated fees; Tornado: sum of unspent notes). |
+| `--amount-max` | Maximum spendable amount (Railgun and Privacy Pools: after estimated fees; Tornado: larger spendable amount of its legacy or signature-derived notes). |
+| `--exclude-new-pools` | Tornado only: spend classic notes for this withdrawal. New-pool notes remain visible in balances. |
 | `--tail-calls <target:calldata[:value],...>` | Ordered calls appended after the payout. Optional third field is `msg.value` (hex or decimal wei) — **ETH unshields only**; ERC-20 tails cannot include `msg.value`. Tornado ERC-20 tails work for paymaster FeeAdapter tokens (Sepolia: DAI; mainnet: DAI, USDC, USDT, WBTC). Railgun ERC-20 tails work for any shielded token; bundler gas is paid from a separate shielded WETH balance, not from the unshielded asset. Tornado and Privacy Pools tails require `--next`, a **stored** public HD `--to`, or a **stored stealth** `--to` (`sN`). Peeked/custom addresses are not allowed. That account is the EIP-7702 delegator: tail calls run there and leftover funds stay there. Railgun tails require a wallet-controlled recipient (`--next` / HD `--to` / stealth). |
 | `--rpc-url <url>` | RPC endpoint. |
 | `--broadcast` | Submit via the protocol bundler or paymaster. **Omit** to print prepared private operation JSON only. |
-| `--without-tor` | Disable Tor for non-RPC HTTP (default: **Tor on** for all private-protocol network calls). Covers Pimlico (via local reverse proxy), Railgun Subsquid/PPOI, Tornado saga CDN + proving artifacts, Privacy Pools ASP, and other `fetch` traffic. Ethereum RPC stays on clearnet. First Tor bootstrap may take several seconds. Or set `KOHAKU_WITHOUT_TOR=1`. |
+| `--without-tor` | Disable Tor for non-RPC HTTP (default: **Tor on** for all private-protocol network calls). Covers Pimlico (via local reverse proxy), Railgun Subsquid/PPOI, Tornado saga CDN, Privacy Pools ASP, and other `fetch` traffic. Ethereum RPC stays on clearnet. First Tor bootstrap may take several seconds. Or set `KOHAKU_WITHOUT_TOR=1`. |
 | `--non-interactive` | JSON; requires `--wallet`, `--password`, `--to` or `--next`, and an amount flag. |
 | `--dataDir <path>` | Data root. |
 
 **Interactive:** recipient menu (next fresh / custom address / existing public or stealth account) → amount (shows max; Railgun and Privacy Pools after estimated fees; Tornado by total unspent notes) → prepared op or broadcast confirmation.
 
-**Tornado amounts:** shields must be an exact multiple of the smallest denomination for that asset (ETH: 0.1; DAI Sepolia: 100; etc.). Unshield can combine multiple notes in one paymaster UserOp (including ERC-20: fee taken from the first note via `quoteWeiInToken`, remaining notes withdrawn in the execution phase) **only** when the recipient is `--next`, a stored public HD `--to`, or a stored stealth `--to` (`sN`) — otherwise extra notes would land on a note-derived EIP-7702 account this wallet does not store. `--tail-calls` have the same requirement. A custom / peeked `--to` is allowed only for a **single-note** unshield with **no** `--tail-calls` (funds go directly to that address). ERC-20 tails cannot include `msg.value`.
+**Tornado amounts:** shields must be an exact multiple of the smallest denomination for that asset (ETH: 0.01 by default, 0.1 with `--exclude-new-pools`; DAI Sepolia: 100; etc.). New shields use signature-derived secrets; old BIP-32 and imported notes remain spendable as legacy notes. One withdrawal uses one derivation scheme. `--amount-max` is the larger single-scheme amount, not the sum of both. The new ETH pools may have much smaller anonymity sets. Unshield can combine multiple notes of one scheme in one paymaster UserOp (including ERC-20: fee taken from the first note via `quoteWeiInToken`, remaining notes withdrawn in the execution phase) **only** when the recipient is `--next`, a stored public HD `--to`, or a stored stealth `--to` (`sN`) — otherwise extra notes would land on a note-derived EIP-7702 account this wallet does not store. `--tail-calls` have the same requirement. A custom / peeked `--to` is allowed only for a **single-note** unshield with **no** `--tail-calls` (funds go directly to that address). ERC-20 tails cannot include `msg.value`. Before proving, selected pools are checked for SDK support, paymaster deployment, and on-chain allowlisting.
 
 **Railgun amounts:** treasury BPS is added on top of the requested amount so the recipient receives that amount exactly. Bundler / privacy-paymaster gas is always paid from **shielded WETH** (you need a WETH note even when unshielding USDC). `--tail-calls` works for ETH and ERC-20; funds already land at `to` via the privacy paymaster (no leftover-forward baking). ERC-20 tails cannot include `msg.value`.
 
-**Privacy Pools amounts:** `--amount` is the net the recipient receives. The paymaster fee comes out of the private balance on top of that net. Unused gas can refund to the same recipient, so they may receive a little more than the typed amount. Approved notes are spent largest first; further notes are execution-phase withdrawals in the same user operation. `--tail-calls` and multi-note withdrawals require `--next`, a stored public HD `--to`, or a stored stealth `--to` (`sN`). That account signs the EIP-7702 delegation, runs the tail calls, and keeps any change. A custom / peeked `--to` is allowed only for a **single-note** unshield with **no** `--tail-calls`. Sepolia has no paymaster adapter, so unshield fails there until one is configured; shield and `balances` still work. Withdrawals are not sent through fastrelay.
+**Privacy Pools amounts:** New shields use signature-derived secrets; older BIP-32 notes remain spendable as legacy notes. One withdrawal uses one derivation scheme, and `--amount-max` uses the larger single-scheme amount. `--amount` is the net the recipient receives. The paymaster fee comes out of the private balance on top of that net. Unused gas can refund to the same recipient, so they may receive a little more than the typed amount. Approved notes are spent largest first; further notes are execution-phase withdrawals in the same user operation. `--tail-calls` and multi-note withdrawals require `--next`, a stored public HD `--to`, or a stored stealth `--to` (`sN`). That account signs the EIP-7702 delegation, runs the tail calls, and keeps any change. A custom / peeked `--to` is allowed only for a **single-note** unshield with **no** `--tail-calls`. Sepolia has no paymaster adapter, so unshield fails there until one is configured; shield and `balances` still work. Withdrawals are not sent through fastrelay.
 
 **Stealth recipients:** `--to s0` (or another stored stealth selector) works for Tornado, Railgun, and Privacy Pools when the stealth private key is in this wallet, including Tornado and Privacy Pools `--tail-calls` and multi-note amounts (the CLI uses the stored key as the EIP-7702 account). Railgun ERC-20 without `--tail-calls` can also go to a custom (non-wallet) address. Railgun native ETH unshield and `--tail-calls` still need a recipient whose key is in this wallet (`--next`, stored public/stealth address, or `sN`), because unwrap / tails run on that EIP-7702 account.
 
@@ -421,6 +443,7 @@ Unshield through a **fresh public account** and forward an **exact** amount to s
 | `--token <address\|eth>` | Token (default: `eth`). |
 | `--amount-wei <n>` | Exact amount the recipient receives, in base units. |
 | `--amount-formatted <decimal>` | Exact amount the recipient receives. |
+| `--exclude-new-pools` | Tornado only: spend classic notes for this transfer. |
 | `--rpc-url <url>` | RPC endpoint. |
 | `--broadcast` | Submit via the protocol bundler or paymaster. **Omit** to print the prepared private operation. |
 | `--without-tor` | Disable Tor for non-RPC HTTP. |
@@ -429,7 +452,7 @@ Unshield through a **fresh public account** and forward an **exact** amount to s
 
 There is no `--next`, `--tail-calls`, or `--amount-max`. The fresh account is persisted only after a successful `--broadcast`.
 
-**Tornado:** the paymaster fee is taken from the unshielded notes, so the command unshields the smallest note sum that covers the transfer plus that fee. Sending exactly 0.1 ETH from 0.1 notes unshields 0.2. The tail pays 0.1 and the remainder stays on the fresh account. The same rule applies to tokens (`--token DAI` and the other paymaster fee-adapter tokens).
+**Tornado:** the paymaster fee is taken from the unshielded notes, so the command unshields the smallest note sum that covers the transfer plus that fee. Sending exactly 0.1 ETH from 0.1 notes unshields 0.2. The tail pays 0.1 and the remainder stays on the fresh account. The same rule applies to supported tokens. The new ETH pools may have much smaller anonymity sets; `--exclude-new-pools` leaves their notes untouched.
 
 **Railgun and Privacy Pools:** the unshield net equals the transfer amount, so the tail can drain the fresh account to zero. Railgun's treasury fee is added on top of that amount. Railgun bundler gas is paid from shielded WETH. The Privacy Pools paymaster fee is paid from the private balance on top of the net. On Privacy Pools the fresh account is the delegate and the refund recipient — `--to` is not. Unused-gas change stays on the fresh account and is not forwarded.
 
@@ -439,6 +462,31 @@ There is no `--next`, `--tail-calls`, or `--amount-max`. The fresh account is pe
 kohaku private-transfer --protocol tornado --wallet testWallet --to 0xFriend --amount-formatted 0.1 --broadcast
 kohaku private-transfer --protocol privacy-pools --wallet testWallet --to 0xFriend --amount-formatted 0.1 --broadcast
 kohaku private-transfer --protocol tornado --wallet testWallet --to 0xFriend --token DAI --amount-formatted 50 --broadcast
+```
+
+---
+
+### `ragequit`
+
+Return the full remaining balance of **one unapproved Privacy Pools note** to its original depositor. The depositor must sign and hold ETH for gas. This reveals the deposit link; use `unshield` for approved notes. Get the label from `balances --include privacy-pools --verbose`.
+
+| Option | Description |
+|--------|-------------|
+| `--label <label>` | Required note label, decimal or hex. |
+| `--scheme <signature\|legacy>` | Note derivation scheme (default: `signature`). |
+| `--from <address-or-index>` | Original depositor; defaults to the note depositor. Supports saved address, HD index, or stealth selector. |
+| `--from-priv` | Derive an unsaved HD `--from` index from the seed. |
+| `--wallet <name>` | Wallet. |
+| `--password <password>` / `--password-file <path>` | Unlock password. |
+| `--rpc-url <url>` | RPC endpoint. |
+| `--broadcast` | Sign and submit; omit to simulate and print payloads. |
+| `--without-tor` | Disable Tor for non-RPC HTTP. |
+| `--non-interactive` | No prompts; supply wallet and password. |
+| `--dataDir <path>` | Data root. |
+
+```bash
+kohaku ragequit --wallet testWallet --label 123
+kohaku ragequit --wallet testWallet --label 123 --scheme legacy --broadcast
 ```
 
 ---
@@ -632,38 +680,6 @@ kohaku set-name-reverse-record --wallet testWallet --name alice.eth --broadcast
 
 ---
 
-### `fetch-artifacts`
-
-Download Railgun, Tornado, and Privacy Pools proving artifacts into `<dataDir>/proving-artifacts` so later **prove / unshield** can load circuits from disk without re-fetching (and without Tor→clearnet fallback). Event sync (`balances`, first shield) does **not** need these files — Tornado and Privacy Pools mainnet cold sync is saga CDN + a chain tip, Railgun is Subsquid. Sepolia Privacy Pools is bundled state JSON + `eth_getLogs` + ASP.
-
-With no selectors, downloads the **full proving set** (Railgun ~260 MB, plus Tornado and the six Privacy Pools circuit files). Narrow with `--variant` / `--poi` / `--tornado` / `--privacy-pools` / keys. The public-sync snapshot is a separate concern — see [`fetch-sync-cache`](./fetch-sync-cache.html).
-
-| Option / args | Description |
-|---------------|-------------|
-| *(none)* | Full Railgun modern `.br` set (transact + POI) + Tornado circuit/key + Privacy Pools commitment and withdraw circuits. |
-| `--variant <NNxMM>` | Railgun transact variant(s), e.g. `01x03` (repeatable; 3 files each). |
-| `--poi <NNxMM>` | POI variant(s): `03x03` or `13x13` (repeatable). |
-| `--tornado` | Tornado circuit JSON + proving key only. |
-| `--privacy-pools` | Privacy Pools commitment + withdraw `wasm` / `vkey` / `zkey` only. |
-| `[keys...]` | Explicit relative paths, e.g. `railgun/01x03/proving_key.bin.br` or `privacy-pools/trusted-setup/final-keys/commitment.zkey`. |
-| `--without-tor` | Download over clearnet. Reveals that this IP fetched kohaku proving artifacts; subsequent private ops stay Tor-only from the local cache (except RPC). Or set `KOHAKU_WITHOUT_TOR=1`. |
-| `--dataDir <path>` | Data root (cache lives at `<dataDir>/proving-artifacts`). |
-| `--non-interactive` | JSON summary only. |
-
-Remote proving-artifact base URL: env `KOHAKU_ARTIFACTS_BASE_URL` (default: `https://artifacts.0000000000.org`). Privacy Pools circuits belong at `<base>/privacy-pools/`.
-
-**Examples:**
-
-```bash
-kohaku fetch-artifacts
-kohaku fetch-artifacts --without-tor
-kohaku fetch-artifacts --variant 01x03 --poi 03x03 --tornado
-kohaku fetch-artifacts --privacy-pools
-kohaku fetch-artifacts railgun/01x03/proving_key.bin.br
-```
-
----
-
 ### `fetch-sync-cache`
 
 Download a published snapshot of public protocol-sync HTTP pages into `<dataDir>/public-sync-cache`, so a fresh wallet's first `balances` / `shield` / `unshield` replays **Railgun Subsquid** and **Tornado saga** history from disk instead of paging it over Tor. Anything newer than the snapshot is still fetched live and written through, so the cache stays current as you use it.
@@ -682,7 +698,7 @@ The snapshot ships as a **manifest plus ~8 MiB chunks** rather than one large ar
 | `--dataDir <path>` | Data root (cache lives at `<dataDir>/public-sync-cache`). |
 | `--non-interactive` | JSON summary only. |
 
-Snapshot base URL: env `KOHAKU_SYNC_CACHE_BASE_URL` (default: `https://artifacts.0000000000.org/sync-cache/v1`, a versioned prefix so a newer snapshot cannot break clients pinned to an older manifest). Per-chunk time budget: env `KOHAKU_SYNC_CACHE_CHUNK_TIMEOUT_MS` (default `300000`); each chunk gets 3 attempts. Chunk URLs are excluded from proving-artifact routing, so the 45 s `KOHAKU_TOR_CDN_TIMEOUT_MS` cap does not apply to them.
+Snapshot base URL: env `KOHAKU_SYNC_CACHE_BASE_URL` (default: `https://artifacts.0000000000.org/sync-cache/v1`, a versioned prefix so a newer snapshot cannot break clients pinned to an older manifest). Per-chunk time budget: env `KOHAKU_SYNC_CACHE_CHUNK_TIMEOUT_MS` (default `300000`); each chunk gets 3 attempts. This timeout is separate from the saga CDN timeout.
 
 Exits non-zero if any chunk ultimately failed. The entries that did land are still valid and usable — re-run to retry the rest.
 
@@ -715,7 +731,7 @@ Traffic is appended to `<dataDir>/<wallet>/network-traffic.ndjson` while you use
 |--------|-------------|
 | `--wallet <name>` | Wallet (optional interactive picker). |
 | `--tor-only` / `--clearnet-only` | Filter by path. |
-| `--category <name>` | `pimlico` \| `subsquid` \| `ppoi` \| `saga` \| `asp` \| `fastrelay` \| `artifacts` \| `rpc` \| `other`. |
+| `--category <name>` | `pimlico` \| `subsquid` \| `ppoi` \| `saga` \| `asp` \| `fastrelay` \| `rpc` \| `other`. |
 | `--limit <n>` | Last N events only. |
 | `--json` | Print JSON (`summary` + `entries`). |
 | `--non-interactive` | Dump the log to stdout (no scroll UI). |
@@ -788,8 +804,8 @@ Files include `public-accounts.json`, stealth storage, `rg-storage.json`, `ppv1-
 
 ## Tips
 
-- **Dry run vs broadcast:** `transfer`, `transact-raw`, `shield`, `unshield`, `private-transfer`, `init-profile`, and the name commands default to *prepare or simulate only*. Always read the printed transaction data before adding `--broadcast`.
-- **Tor (all-but-RPC):** Non-RPC HTTP (Pimlico, Railgun Subsquid/PPOI, Tornado saga/artifacts, Privacy Pools ASP, …) goes through [tor-js](https://github.com/privacy-ethereum/tor-js) by default on `balances` (when syncing private protocols), `shield`, `unshield`, `private-transfer`, Tornado note import/export, `transfer`, `transact-raw`, and name commands. Ethereum RPC stays clearnet. Use `--without-tor` or `KOHAKU_WITHOUT_TOR=1` to skip. **Saga CDN and proving artifacts are Tor-or-fail** (no clearnet fallback; large GETs time out after `KOHAKU_TOR_CDN_TIMEOUT_MS`, default 45s). First protocol sync shows live progress on the spinner and does not download proving keys. Artifacts are served from `<dataDir>/proving-artifacts` when cached; otherwise fetched from `KOHAKU_ARTIFACTS_BASE_URL` on **prove / unshield**. Pre-warm keys with `kohaku fetch-artifacts` (optionally `--without-tor`). Prefetch historical Subsquid/saga pages with `kohaku fetch-sync-cache`. After Tor bootstrap corruption, run `kohaku clear-tor-cache`. Railgun Subsquid and Tornado saga HTTP pages are reused from `<dataDir>/public-sync-cache` (wipe with `kohaku clear-tor-cache --public-sync`). Set `KOHAKU_TOR_DEBUG=1` for per-request Tor logs. Review with `view-network-traffic --wallet <name>`.
+- **Dry run vs broadcast:** `transfer`, `transact-raw`, `shield`, `unshield`, `private-transfer`, `ragequit`, `init-profile`, and the name commands default to *prepare or simulate only*. Always read the printed transaction data before adding `--broadcast`.
+- **Tor (all-but-RPC):** Non-RPC HTTP (Pimlico, Railgun Subsquid/PPOI, Tornado saga, Privacy Pools ASP, …) goes through [tor-js](https://github.com/privacy-ethereum/tor-js) by default on `balances` (when syncing private protocols), `shield`, `unshield`, `private-transfer`, Tornado note import/export, `transfer`, `transact-raw`, and name commands. Ethereum RPC stays clearnet. Use `--without-tor` or `KOHAKU_WITHOUT_TOR=1` to skip. **Saga CDN requests are Tor-or-fail** (no clearnet fallback; large GETs time out after `KOHAKU_TOR_CDN_TIMEOUT_MS`, default 45s). Sync progress shows saga and RPC work where totals are available. Proving circuits come from the `kohaku-artifacts` dependency installed with the CLI and are not fetched at prove time. Prefetch historical Subsquid/saga pages with `kohaku fetch-sync-cache`. After Tor bootstrap corruption, run `kohaku clear-tor-cache`. Railgun Subsquid and Tornado saga HTTP pages are reused from `<dataDir>/public-sync-cache` (wipe with `kohaku clear-tor-cache --public-sync`). Set `KOHAKU_TOR_DEBUG=1` for per-request Tor logs. Review with `view-network-traffic --wallet <name>`.
 - **Fresh addresses:** Use `next-fresh-address` before funding, and `unshield --next` / `private-transfer` when you want withdrawals to land on a new public key that was not your shield source. Use `next-fresh-address --peek` to see the next address without persisting it (e.g. when building `--tail-calls` for a later `unshield --next`). Do not pass a peeked address as Tornado / Privacy Pools `--to` together with `--tail-calls` — peeked addresses are not stored, so the CLI will refuse rather than 7702 a note-derived key.
 - **Profile / stealth:** Prefer `init-profile` (fully interactive with no args) to publish ERC-6538 keys (and optionally a name). Unshield to stored stealth accounts with `--to s0`. Print the meta URI with `see-stealth-meta-address`. New wallets and imports store `.stealth-start-block` at the current chain tip so first `balances` stealth scans skip pre-wallet announcer history. Pass `create-wallet --import --stealth-start-block` (bare) for the Kohaku-schema floor (mainnet `25700000` / Sepolia `11455454`), or an explicit block. Later `balances --stealth-start-block` can still back-date below the file.
 - **Exact pays from private balance:** Prefer `private-transfer` over manually crafting a transfer `--tail-calls`.

@@ -12,6 +12,8 @@ You will pick your wallet (if you have more than one), enter the password, and w
 
 The **first** Tornado / Railgun sync can take a while (paging saga / Subsquid history). Prefetch that snapshot once with [`fetch-sync-cache`](./fetch-sync-cache.html) so most of it comes from disk; later runs only catch up what is new. Privacy Pools **mainnet** history comes from its own saga CDN (sealed chunks are cached on the way); Sepolia Privacy Pools still uses bundled state + `eth_getLogs`.
 
+Sync progress now shows a separate bar for each step whose size is known (saga chunks, RPC windows, and stealth blocks). A quiet stretch can still say it is working while the elapsed time keeps moving. The Sepolia Privacy Pools bundled snapshot was updated in v0.0.11, so first sync starts from a later block.
+
 You should see:
 
 - **Public** — ETH / ERC20 tokens sitting on your addresses, potentially linked to whoever sent them. (Only the top 25-50 tokens show up automatically you can scan for custom tokens with a `--tokens` flag)
@@ -36,3 +38,5 @@ kohaku balances --include privacy-pools,tornado
 - After an [unshield](./unshield.html), private drops and a (hopefully fresh) public address receives funds
 
 If a deposit is missing, wait for more confirmations and run `balances` again. Also double-check you are on the right wallet and that `RPC_URL` points at right network.
+
+Older Tornado and Privacy Pools notes show as **legacy** when present. They remain spendable alongside newer signature-derived notes, though a single withdrawal uses one scheme. Tornado balances include the new ETH denominations even when you use `--exclude-new-pools` on shield, unshield, or private-transfer.

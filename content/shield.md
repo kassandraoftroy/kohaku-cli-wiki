@@ -49,7 +49,11 @@ kohaku shield --from 1 --amount-formatted 0.1 --skip-sim
 
 ## Note sizes
 
-Tornado uses **fixed denomination notes**. For ETH, deposits must be an exact multiple of **0.1 ETH** (e.g. `0.1`, `1.3` — not `1.35`).
+Tornado uses **fixed denomination notes**. The classic ETH pools start at **0.1 ETH**. v0.0.12 also uses extended ETH pools by default (including **0.01 ETH**), so an ETH deposit can be a multiple of 0.01. Pass `--exclude-new-pools` to use only classic pools; then the minimum step is 0.1 ETH.
+
+**The new denominations may have much smaller anonymity sets than the classic pools.** Check the pool selection in the shield preview before broadcasting. A smaller note is not automatically a more private note.
+
+New Tornado and Privacy Pools deposits use signature-derived note secrets. Older notes remain in your wallet and can still be spent.
 
 Shield **as much as fits** into valid notes from the fresh address. Leave leftovers alone for now — see [Dust Management](./dust.html).
 

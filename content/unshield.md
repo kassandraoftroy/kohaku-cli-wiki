@@ -28,7 +28,9 @@ kohaku unshield --next --amount-max --broadcast
 
 > **IMPORTANT:** when you unshield multiple notes at once e.g. 0.2 ETH or from multiple pools at once e.g. 1.1 ETH you could be decreasing your anonymity set significantly. Especially if you sheilded 1.1 ETH into two pool from a public account prior. Be mindful of these fingerprinting techniques! 
 
-Amounts must still match Tornado note rules (e.g. multiples of 0.1 for ETH). Also if you have a single 1 ETH note a 0.1 ETH or 0.2 ETH unshield will fail (you don't have any 0.1 notes to unshield)
+Amounts must still match Tornado notes you actually hold. The new ETH pools include 0.01 ETH notes by default, but a single 1 ETH note cannot satisfy a 0.1 or 0.2 ETH withdrawal. The new denominations may have much smaller anonymity sets. `--exclude-new-pools` spends only classic Tornado notes; it does not hide new-pool notes from `balances`.
+
+Older Tornado and Privacy Pools notes remain spendable. A withdrawal uses either legacy or newer signature-derived notes, never both in the same withdrawal. `--amount-max` uses the larger spendable balance of those two schemes, not their sum.
 
 ## Network metadata
 

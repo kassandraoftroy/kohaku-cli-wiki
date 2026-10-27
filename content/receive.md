@@ -32,7 +32,7 @@ If you are moving funds from another wallet you already control (hot wallet, exc
 
 This guide focuses on **ETH**, **USDC**, and **DAI** on mainnet as preferred tokens to recieve since those are the assets you can later [shield into Tornado Cash](./shield.html). These Tornado pools have the most usage and thus give the most privacy. (Ideally more tokens and sizes are well bootstrapped!)
 
-> **Tip:** Prefer receiving amounts that fit Tornado note sizes cleanly (for ETH that means multiples of **0.1 ETH** + small delta for gas). Leftover dust can be awkward — see [Dust Management](./dust.html).
+> **Tip:** Prefer receiving amounts that fit Tornado note sizes cleanly, plus a small amount for gas. Classic ETH pools start at **0.1 ETH**. The newer pools include **0.01 ETH**, but may have much smaller anonymity sets; see [Shield Funds](./shield.html). Leftover dust can be awkward — see [Dust Management](./dust.html).
 
 ## Next
 

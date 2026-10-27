@@ -30,7 +30,7 @@ export RPC_URL=http://localhost:8545
 
 (this is the default so if your node is `localohst:8545` the var doesn't even need to be explicitly set)
 
-Everything else the CLI contacts (Pimlico, Subsquid, PPOI, saga, proving artifacts, ASP, …) goes through **Tor by default**. The Ethereum RPC is the deliberate exception: it stays on clearnet. That is fine when the RPC is local. If you use a remote provider instead, assume it can see which addresses you query and may already identify you via an API key — Tor would not help much there anyway. Details: [Network traffic](./network-traffic.html).
+Everything else the CLI contacts (Pimlico, Subsquid, PPOI, saga, ASP, …) goes through **Tor by default**. The Ethereum RPC is the deliberate exception: it stays on clearnet. That is fine when the RPC is local. If you use a remote provider instead, assume it can see which addresses you query and may already identify you via an API key — Tor would not help much there anyway. Details: [Network traffic](./network-traffic.html).
 
 If you must use a remote RPC provider (Alchemy, Infura, Ankr, etc):
 
@@ -48,19 +48,17 @@ The first Tornado / Railgun sync (`balances`, `shield`, `unshield`) pages a lot 
 kohaku fetch-sync-cache
 ```
 
-This is the more important setup step — event sync does **not** need proving keys. Details: [`fetch-sync-cache`](./fetch-sync-cache.html).
+Proving circuits are bundled with the CLI; this step only prepares public sync history. Details: [`fetch-sync-cache`](./fetch-sync-cache.html).
 
 Cache lives under `<dataDir>/public-sync-cache`. Wipe with `kohaku clear-tor-cache --public-sync`.
 
-## Optional: proving artifacts
+## Proving artifacts
 
-Railgun / Tornado / Privacy Pools **proving keys** cache under `<dataDir>/proving-artifacts`. You need them later for prove / unshield — not for the first `balances` sync. Load them with [`fetch-artifacts`](./fetch-artifacts.html) (Privacy Pools alone: `fetch-artifacts --privacy-pools`).
-
-(While setting everything up, now is also a good time to run [`fetch-artifacts`](./fetch-artifacts.html) so those keys are on disk before you unshield.)
+Railgun / Tornado / Privacy Pools proving circuits install with the CLI. There is no separate artifact fetch step or `fetch-artifacts` command. See [Proving Artifacts](./fetch-artifacts.html).
 
 ## Optional: `KOHAKU_WITHOUT_TOR`
 
-Tor is **on** by default for non-RPC HTTP. There is **no Tor→clearnet fallback** for saga CDN or proving artifacts — those fail if Tor cannot complete the request (unless you explicitly disable Tor). Set this to always skip Tor without passing `--without-tor` on every command:
+Tor is **on** by default for non-RPC HTTP. There is **no Tor→clearnet fallback** for saga CDN requests — they fail if Tor cannot complete the request (unless you explicitly disable Tor). Set this to always skip Tor without passing `--without-tor` on every command:
 
 ```bash
 export KOHAKU_WITHOUT_TOR=1
