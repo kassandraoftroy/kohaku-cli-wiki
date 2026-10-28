@@ -2,10 +2,10 @@
 title: Full Commands Reference
 order: 24
 section: appendix
-summary: Full command reference for kohaku-cli 0.0.12
+summary: Full command reference for kohaku-cli 0.0.14
 ---
 
-Synced with the [kohaku-cli README](https://github.com/kassandraoftroy/kohaku-cli) for **0.0.12**. Flags may still evolve — when in doubt, run `kohaku help` or `kohaku <command> --help`.
+Synced with the [kohaku-cli README](https://github.com/kassandraoftroy/kohaku-cli) for **0.0.14**. Flags may still evolve — when in doubt, run `kohaku help` or `kohaku <command> --help`.
 
 ## Commands Summary
 
@@ -365,6 +365,8 @@ Move funds from a **public** account into a private protocol.
 
 When a shield needs more than one on-chain call, the CLI uses EIP-7702 Simple7702Account (`0xe6Cae83B…855B`) the same way as `transact-raw`.
 
+Tornado shield packing is limited to **five deposit notes** per operation (approval calls do not count). The CLI rejects a larger packing before preparing commitments and suggests smaller amounts. The confirmation lists the destination pools.
+
 **Examples:**
 
 ```bash
@@ -405,6 +407,8 @@ Withdraw **private** balance to a **public** address. Railgun, Tornado Cash, and
 **Interactive:** recipient menu (next fresh / custom address / existing public or stealth account) → amount (shows max; Railgun and Privacy Pools after estimated fees; Tornado by total unspent notes) → prepared op or broadcast confirmation.
 
 **Tornado amounts:** shields must be an exact multiple of the smallest denomination for that asset (ETH: 0.01 by default, 0.1 with `--exclude-new-pools`; DAI Sepolia: 100; etc.). New shields use signature-derived secrets; old BIP-32 and imported notes remain spendable as legacy notes. One withdrawal uses one derivation scheme. `--amount-max` is the larger single-scheme amount, not the sum of both. The new ETH pools may have much smaller anonymity sets. Unshield can combine multiple notes of one scheme in one paymaster UserOp (including ERC-20: fee taken from the first note via `quoteWeiInToken`, remaining notes withdrawn in the execution phase) **only** when the recipient is `--next`, a stored public HD `--to`, or a stored stealth `--to` (`sN`) — otherwise extra notes would land on a note-derived EIP-7702 account this wallet does not store. `--tail-calls` have the same requirement. A custom / peeked `--to` is allowed only for a **single-note** unshield with **no** `--tail-calls` (funds go directly to that address). ERC-20 tails cannot include `msg.value`. Before proving, selected pools are checked for SDK support, paymaster deployment, and on-chain allowlisting.
+
+For Tornado, the CLI checks the final signed gas budget before confirmation. A standard unshield may use the SDK's conservative fallback after an eligible gas-estimation failure, with a warning before broadcast and `gasEstimation` in JSON. User `--tail-calls` and `private-transfer` still require successful estimation. Fee previews use the fee committed in the prepared proof.
 
 **Railgun amounts:** treasury BPS is added on top of the requested amount so the recipient receives that amount exactly. Bundler / privacy-paymaster gas is always paid from **shielded WETH** (you need a WETH note even when unshielding USDC). `--tail-calls` works for ETH and ERC-20; funds already land at `to` via the privacy paymaster (no leftover-forward baking). ERC-20 tails cannot include `msg.value`.
 

@@ -46,4 +46,4 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 - [Fetch Sync Cache](./fetch-sync-cache.html) — prefetch Tornado/Railgun sync history
 - [Proving Artifacts](./fetch-artifacts.html) — circuits are bundled with the CLI
 - [Network Traffic](./network-traffic.html) — Tor vs clearnet, and how to audit contacts
-- [Full Commands Reference](./commands.html) — full command reference (0.0.12)
+- [Full Commands Reference](./commands.html) — full command reference (0.0.14)

@@ -32,6 +32,8 @@ Amounts must still match Tornado notes you actually hold. The new ETH pools incl
 
 Older Tornado and Privacy Pools notes remain spendable. A withdrawal uses either legacy or newer signature-derived notes, never both in the same withdrawal. `--amount-max` uses the larger spendable balance of those two schemes, not their sum.
 
+Tornado unshields now check the final gas budget before broadcast. If gas estimation is unavailable, a standard unshield may use a conservative SDK fallback; the CLI warns you before broadcasting and includes `gasEstimation` in JSON output. Unshields with `--tail-calls`, including `private-transfer`, still require a successful gas estimate. The fee shown in the preview is the one committed in the prepared proof.
+
 ## Network metadata
 
 Unshields are submitted through a paymaster / bundler path (Pimlico). That traffic — and other privacy-protocol HTTP — goes through **Tor by default**. Ethereum RPC stays clearnet (ideally a local node).

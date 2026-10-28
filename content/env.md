@@ -54,7 +54,7 @@ Cache lives under `<dataDir>/public-sync-cache`. Wipe with `kohaku clear-tor-cac
 
 ## Proving artifacts
 
-Railgun / Tornado / Privacy Pools proving circuits install with the CLI. There is no separate artifact fetch step or `fetch-artifacts` command. See [Proving Artifacts](./fetch-artifacts.html).
+Railgun / Tornado / Privacy Pools proving circuits install with the CLI. There is no separate artifact fetch step or `fetch-artifacts` command anymore. See [Proving Artifacts](./fetch-artifacts.html).
 
 ## Optional: `KOHAKU_WITHOUT_TOR`
 

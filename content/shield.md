@@ -53,6 +53,8 @@ Tornado uses **fixed denomination notes**. The classic ETH pools start at **0.1 
 
 **The new denominations may have much smaller anonymity sets than the classic pools.** Check the pool selection in the shield preview before broadcasting. A smaller note is not automatically a more private note.
 
+The confirmation now lists the destination pools. A Tornado shield can use at most **five deposit notes** in one operation; if your amount needs more, the CLI suggests smaller amounts. This limit also applies with `--exclude-new-pools` (token approval calls do not count as notes).
+
 New Tornado and Privacy Pools deposits use signature-derived note secrets. Older notes remain in your wallet and can still be spent.
 
 Shield **as much as fits** into valid notes from the fresh address. Leave leftovers alone for now — see [Dust Management](./dust.html).
