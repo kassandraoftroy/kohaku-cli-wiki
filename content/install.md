@@ -41,7 +41,7 @@ Then check:
 kohaku --version
 ```
 
-should output: `0.0.14` (for this guide)
+should output: `0.1.0` (for this guide)
 
 Writing `kohaku` file to any directory on your PATH works. E.g. You could also write kohaku binary to `~/.local/bin` with:
 
@@ -58,6 +58,8 @@ export PATH="$HOME/.local/bin:$PATH"
 ## Update
 
 Note that to update the CLI you need to sync with latest `main` branch of the repository and and repeat `npm run build`. That should update your cli (check with `kohaku --version`)
+
+If you are upgrading an older wallet to 0.1.0, read [Upgrading to 0.1.0](./upgrading-to-0.1.0.html) before your first private sync.
 
 
 

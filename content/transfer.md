@@ -1,12 +1,21 @@
 ---
 title: Transfer Funds
 order: 12
-summary: Send ETH or ERC-20s from a public account
+summary: Send ETH or ERC-20s from a public account or private protocol
 ---
 
-Once funds are on a public account (usually after an [unshield](./unshield.html)), you can move them with the CLI.
+You can send funds from a public account or directly from a private protocol with the CLI.
 
 If you already know the recipient and amount **before** unshielding, prefer [`private-transfer`](./private-transfer.html) (exact pay) or a [tail call](./tail-calls.html) (custom calldata) so the fresh address never sits idle with the full note. Use `transfer` when you already unshielded, or when you decide the destination only afterward.
+
+`transfer --from tornado`, `--from privacy-pools`, and `--from railgun` now use the same flow as `private-transfer --protocol …`. For example, dry-run a Tornado payment, then add `--broadcast` when ready:
+
+```bash
+kohaku transfer --from tornado --to 0xRecipient --amount-formatted 0.4
+kohaku transfer --from tornado --to 0xRecipient --amount-formatted 0.4 --broadcast
+```
+
+The amount is what the recipient receives; the CLI handles the private withdrawal and fee. `--exclude-new-pools` also works with `--from tornado`. `--amount-max`, `--from-priv`, and `--stealth` are for public senders only. A Railgun `--to 0zk…` recipient receives a private transfer inside Railgun without unshielding.
 
 ## Simple transfers
 
@@ -30,7 +39,7 @@ kohaku transfer --from 0xYourAddress --to 0xRecipient --token USDC --amount-form
 
 ## Send the full balance
 
-`--amount-max` means “send whatever this address currently holds of that asset” — the full ERC-20 balance, or for ETH the full balance minus what must be reserved for gas:
+`--amount-max` is for public senders: it means “send whatever this address currently holds of that asset” — the full ERC-20 balance, or for ETH the full balance minus what must be reserved for gas:
 
 ```bash
 kohaku transfer --from 0xYourAddress --to 0xRecipient --token USDC --amount-max --broadcast

@@ -49,11 +49,13 @@ kohaku shield --from 1 --amount-formatted 0.1 --skip-sim
 
 ## Note sizes
 
-Tornado uses **fixed denomination notes**. The classic ETH pools start at **0.1 ETH**. v0.0.12 also uses extended ETH pools by default (including **0.01 ETH**), so an ETH deposit can be a multiple of 0.01. Pass `--exclude-new-pools` to use only classic pools; then the minimum step is 0.1 ETH.
+Tornado uses **fixed denomination notes**. ETH pools include **0.01, 0.03, 0.1, 0.3, 1, 3, 10, and 30 ETH** sizes (10 ETH is also available on Sepolia). You can shield amounts such as **0.01** or **0.45 ETH** by combining notes. The amount must be an exact multiple of 0.01 ETH. Pass `--exclude-new-pools` to use only classic pools; then the minimum step is 0.1 ETH.
 
 **The new denominations may have much smaller anonymity sets than the classic pools.** Check the pool selection in the shield preview before broadcasting. A smaller note is not automatically a more private note.
 
-The confirmation now lists the destination pools. A Tornado shield can use at most **five deposit notes** in one operation; if your amount needs more, the CLI suggests smaller amounts. This limit also applies with `--exclude-new-pools` (token approval calls do not count as notes).
+Interactive shields offer note packings and show the denominations, note count, and transaction count. Repeat `--exclude-denomination <amount>` to avoid a specific pool size; for example, `--exclude-denomination 0.03`. The confirmation lists the destination pools.
+
+The CLI puts at most **five deposit notes per transaction** (approval calls do not count). Larger shields split into sequential transactions by default. If a later transaction fails, earlier deposits may already be shielded; check the reported hashes and amounts before retrying. Use `--disallow-multiple-userops` to reject a plan that needs more than one transaction.
 
 New Tornado and Privacy Pools deposits use signature-derived note secrets. Older notes remain in your wallet and can still be spent.
 

@@ -4,7 +4,7 @@ order: 16
 summary: Deal with amounts too small for a Tornado note
 ---
 
-Tornado only accepts **fixed note sizes**. Anything left over — e.g. `0.037 ETH` after shielding `1.0` — is **dust**. Dust is annoying because you cannot deposit it into Tornado as-is, and moving it carelessly can link addresses.
+Tornado uses **fixed note sizes**, but can combine them: ETH deposits can be multiples of **0.01 ETH**, such as 0.45 ETH. A leftover smaller than 0.01 ETH — e.g. `0.007 ETH` — cannot be shielded into Tornado as-is. Moving that dust carelessly can link addresses. The newer small-denomination pools may have much smaller anonymity sets than classic pools.
 
 ## What not to do
 

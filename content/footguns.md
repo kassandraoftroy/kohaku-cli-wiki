@@ -14,7 +14,7 @@ A short list of ways people accidentally deanonymize themselves. Skim it once; r
 - **Unshielding to a used address with deanonymizing links** - if you don't unshield to a fresh address then it is important to understand that the links this receiving address has can leave clues to the identity of the unshielder
 - **Transferring between your own “anonymous” accounts** — permanent public link. Be extremely careful, if you need to consolidate "dust" funds, don't do this naively [see here](./dust.html)
 - **One long-lived address for “all private DeFi”** — a biography in transaction form
-- **Matching Custom Shield/Unshield Amounts** - If you shield 11.1 ETH from a public address and later unshield exactly 11.1 ETH to a new public address these matching amounts create an extremely high liklihood that you are the same person. Less severe but similar idea if you shield unshield 0.3 ETH (three correlated notes on the 0.1 pool).
+- **Matching Custom Shield/Unshield Amounts** - If you shield 11.1 ETH from a public address and later unshield exactly 11.1 ETH to a new public address these matching amounts create an extremely high liklihood that you are the same person. Matching a distinctive combination of smaller denominations (for example 0.45 ETH) can give a similar clue.
 - **Assuming new Tornado denominations are equally private** — the extended ETH pools are enabled by default but can have much smaller anonymity sets. Check the pool before shielding or spending; `--exclude-new-pools` restricts Tornado operations to classic pools.
 
 ## Tooling & metadata

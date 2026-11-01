@@ -16,6 +16,8 @@ It exposes the main features of [kohaku](https://github.com/ethereum/kohaku) an 
 
 The goal of the CLI is to make it more practical and convenient for people to get strong privacy for their financial activity on Ethereum. This guide walks you through using the CLI to actually achieve that end.
 
+Already have a wallet from before 0.1.0? Read [Upgrading to 0.1.0](./upgrading-to-0.1.0.html) for legacy notes, Railgun resync, and the new sync cache.
+
 ## Walkthrough
 
 - [Install](./install.html) — installation guide
@@ -40,10 +42,10 @@ The goal of the CLI is to make it more practical and convenient for people to ge
 ## Appendix
 
 - [Import Wallet](./import.html) — import an existing seed phrase
+- [Upgrading to 0.1.0](./upgrading-to-0.1.0.html) — legacy notes, Railgun sync, and the new cache
 - [Import Tornado Notes](./import-tornado-notes.html) — bring legacy Tornado notes into kohaku
 - [Privacy Pools Ragequit](./ragequit.html) — exit an unapproved note to its depositor
 - [Managing Ethereum Names](./managing-names.html) — renew, transfer, text records, website
 - [Fetch Sync Cache](./fetch-sync-cache.html) — prefetch Tornado/Railgun sync history
-- [Proving Artifacts](./fetch-artifacts.html) — circuits are bundled with the CLI
 - [Network Traffic](./network-traffic.html) — Tor vs clearnet, and how to audit contacts
-- [Full Commands Reference](./commands.html) — full command reference (0.0.14)
+- [Full Commands Reference](./commands.html) — full command reference (0.1.0)

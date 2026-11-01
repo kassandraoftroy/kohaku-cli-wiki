@@ -10,13 +10,13 @@ kohaku balances
 
 You will pick your wallet (if you have more than one), enter the password, and wait for a short sync.
 
-The **first** Tornado / Railgun sync can take a while (paging saga / Subsquid history). Prefetch that snapshot once with [`fetch-sync-cache`](./fetch-sync-cache.html) so most of it comes from disk; later runs only catch up what is new. Privacy Pools **mainnet** history comes from its own saga CDN (sealed chunks are cached on the way); Sepolia Privacy Pools still uses bundled state + `eth_getLogs`.
+The **first** private sync can take a while. On mainnet, prefetch Railgun, Tornado, and Privacy Pools history with [`fetch-sync-cache`](./fetch-sync-cache.html) so most historical work comes from disk; live state still catches up afterward. Sepolia keeps its existing sync path.
 
 Sync progress now shows a separate bar for each step whose size is known (saga chunks, RPC windows, and stealth blocks). A quiet stretch can still say it is working while the elapsed time keeps moving. The Sepolia Privacy Pools bundled snapshot was updated in v0.0.11, so first sync starts from a later block.
 
 You should see:
 
-- **Public** — ETH / ERC20 tokens sitting on your addresses, potentially linked to whoever sent them. (Only the top 25-50 tokens show up automatically you can scan for custom tokens with a `--tokens` flag)
+- **Public** — ETH / ERC20 tokens sitting on your addresses, potentially linked to whoever sent them. (Default tokens show up automatically; scan custom tokens with `--tokensList`.)
 - **Private** — what you have already shielded (with `DEFAULT_PRIVACY_PROTOCOL=tornado`, this is your Tornado balance)
 
 For a per-address breakdown:
@@ -30,6 +30,8 @@ If you would like to see private blances from other protocols than your default,
 ```bash
 kohaku balances --include privacy-pools,tornado
 ```
+
+`kohaku balances --include railgun` also shows your full Railgun `0zk` address. Non-interactive JSON includes it as `railgun_address`.
 
 ## Reading the result
 

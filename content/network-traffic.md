@@ -27,13 +27,13 @@ First Tor bootstrap may take a few seconds. Set `KOHAKU_TOR_DEBUG=1` if you need
 
 ## Public-sync cache
 
-Shared **Railgun Subsquid** and **Tornado saga** HTTP pages live under `<dataDir>/public-sync-cache` and speed up those syncs (`balances`, `shield`, `unshield`). Prefetch with [`fetch-sync-cache`](./fetch-sync-cache.html). Anything newer than the snapshot is still fetched live (Tor by default) and written through.
+On mainnet, [`fetch-sync-cache`](./fetch-sync-cache.html) installs verified Railgun history, historical PPOI leaves, and Tornado / Privacy Pools Saga data under `<dataDir>/sync-cache-v2`. Later blocks and PPOI root/status/tip checks still use live sources (Tor by default). Sepolia keeps its existing live sync path.
 
-Privacy Pools **mainnet** history comes from its saga CDN (sealed chunks are cached on the way); Sepolia Privacy Pools stays on bundled state + `eth_getLogs`. Wipe the public-sync cache with `kohaku clear-tor-cache --public-sync`.
+The old `<dataDir>/public-sync-cache` is no longer read. `kohaku clear-tor-cache --public-sync` removes both cache directories.
 
 ## Proving circuits
 
-Railgun, Tornado, and Privacy Pools circuits come from the `kohaku-artifacts` dependency installed with the CLI. Proving and unshielding do not fetch circuit files. The old `fetch-artifacts` command is gone; see [Proving Artifacts](./fetch-artifacts.html).
+Railgun, Tornado, and Privacy Pools circuits come from the `kohaku-artifacts` dependency installed with the CLI. Proving and unshielding do not fetch circuit files. There is no `fetch-artifacts` command anymore.
 
 ## Disabling Tor
 
@@ -58,7 +58,7 @@ If Tor fails to start (e.g. corrupted Arti cache / “Unable to bootstrap a work
 kohaku clear-tor-cache
 ```
 
-The next Tor start re-downloads consensus (slower first bootstrap). To also wipe the public-sync HTTP cache:
+The next Tor start re-downloads consensus (slower first bootstrap). To also wipe the v2 snapshot and old public-sync cache:
 
 ```bash
 kohaku clear-tor-cache --public-sync
@@ -98,8 +98,7 @@ RPC rows always show as clearnet — that is expected. Watch for unexpected clea
 
 ## Related
 
-- [Fetch Sync Cache](./fetch-sync-cache.html) — prefetch saga / Subsquid history
-- [Proving Artifacts](./fetch-artifacts.html) — bundled proving circuits
+- [Fetch Sync Cache](./fetch-sync-cache.html) — prefetch verified mainnet protocol history
 - [Set Env](./env.html) — `RPC_URL`, `KOHAKU_WITHOUT_TOR`, sync-cache env vars
 - [Full Commands Reference](./commands.html) — full `view-network-traffic` / `--without-tor` flag reference
 - [Unshield Funds](./unshield.html) — why Pimlico traffic matters for withdrawals

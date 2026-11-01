@@ -12,6 +12,8 @@ kohaku activity --wallet myWallet
 
 Each entry shows the operation, chain, submission status, transaction hash when available, and UserOp hash for sponsored operations. `--non-interactive` prints versioned JSON:
 
+For Railgun transfers, the entry also records the sending `0zk` address and final `0x` or `0zk` recipient.
+
 ```bash
 kohaku activity --wallet myWallet --non-interactive --password-file ./wallet-password
 ```

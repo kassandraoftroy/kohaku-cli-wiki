@@ -33,12 +33,12 @@ kohaku next-fresh-address --peek
 
 ## Example: pay someone in ETH
 
-You owe `0.15 ETH`, but Tornado notes are fixed sizes — so unshield a full note (e.g. `0.2`) and forward exactly `0.15` in a tail call. The leftover (~`0.05` minus fees) stays on your fresh address.
+You owe `0.15 ETH`, but Tornado notes are fixed sizes — so unshield a note you actually hold (e.g. a `0.3 ETH` note) and forward exactly `0.15` in a tail call. The leftover (~`0.15 ETH` minus fees) stays on your fresh address.
 
 `0.15 ETH` = `150000000000000000` wei = `0x214e8348c4f0000`:
 
 ```bash
-kohaku unshield --next --amount-formatted 0.2 \
+kohaku unshield --next --amount-formatted 0.3 \
   --tail-calls 0xRecipient:0x:0x214e8348c4f0000
 ```
 

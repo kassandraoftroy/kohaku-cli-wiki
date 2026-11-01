@@ -42,7 +42,7 @@ You are then entrusting that provider with privacy-critical information (address
 
 ## Recommended: public-sync cache
 
-The first Tornado / Railgun sync (`balances`, `shield`, `unshield`) pages a lot of **public** history over the network (saga CDN + Railgun Subsquid). Prefetch that snapshot now to make first protocol **syncs significantly faster**:
+The first mainnet Railgun / Tornado / Privacy Pools sync can fetch a lot of **public** history. Prefetch the verified v2 snapshot to make first protocol **syncs significantly faster**:
 
 ```bash
 kohaku fetch-sync-cache
@@ -50,11 +50,13 @@ kohaku fetch-sync-cache
 
 Proving circuits are bundled with the CLI; this step only prepares public sync history. Details: [`fetch-sync-cache`](./fetch-sync-cache.html).
 
-Cache lives under `<dataDir>/public-sync-cache`. Wipe with `kohaku clear-tor-cache --public-sync`.
+Cache lives under `<dataDir>/sync-cache-v2`. Sepolia still uses its existing sync path. The old `<dataDir>/public-sync-cache` is no longer read; `kohaku clear-tor-cache --public-sync` removes both directories.
+
+If you used a wallet before 0.1.0, see [Upgrading to 0.1.0](./upgrading-to-0.1.0.html) before your first private sync.
 
 ## Proving artifacts
 
-Railgun / Tornado / Privacy Pools proving circuits install with the CLI. There is no separate artifact fetch step or `fetch-artifacts` command anymore. See [Proving Artifacts](./fetch-artifacts.html).
+Railgun / Tornado / Privacy Pools proving circuits install with the CLI. There is no separate artifact fetch step or `fetch-artifacts` command anymore.
 
 ## Optional: `KOHAKU_WITHOUT_TOR`
 
