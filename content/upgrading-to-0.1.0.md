@@ -17,6 +17,8 @@ An unshield or private transfer spends **one derivation scheme at a time**. It c
 
 The 0.0.16 Railgun implementation uses a Rust/WASM wallet. An existing Railgun wallet **rebuilds its history into a new encrypted checkpoint** on its next `balances --include railgun` (or other Railgun) sync; this can make that first sync take longer. Completed sync windows are saved so it can resume. The old `rg-storage.json` is preserved; you do not need to delete the wallet or manually reset it. Notes still require valid PPOI before spending, and the old `KOHAKU_RAILGUN_FORCE_VALID_POI` override was removed.
 
+In v0.1.3, an older Railgun checkpoint also gets a one-time rebuild of its computed Merkle nodes. It may make the first sync after updating slower, but later syncs reuse those nodes.
+
 ## Sync cache
 
 Run `kohaku fetch-sync-cache` again on mainnet. Version 0.1.0 uses a verified **v2** snapshot under `<dataDir>/sync-cache-v2` for Railgun, Tornado, and Privacy Pools history. It does not read the old `<dataDir>/public-sync-cache` snapshot. A first sync still works without v2, but fetches history live and may take longer. Sepolia keeps its existing sync path.

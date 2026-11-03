@@ -9,6 +9,8 @@ The first private sync on a fresh **mainnet** wallet can take a while. `fetch-sy
 
 The snapshot includes bounded Railgun history, historical PPOI list leaves, and frozen Tornado and Privacy Pools Saga data. Newer blocks still come from live sources. PPOI Merkle-root validation, TXID status, proof submission, and the growing list tip remain live. A first sync also works without the snapshot; it simply fetches history live.
 
+On mainnet, sync also keeps complete PPOI leaf pages and confirmed historical Railgun indexer responses fetched after the snapshot in `<dataDir>/sync-cache-v2/live`. This cache is shared across wallets and capped at 256 MiB. Heads, recent indexer state, incomplete PPOI pages, root validation, status, and submissions remain live. Existing v2 snapshots still work; this change does not require downloading them again.
+
 This is **public sync history**, not proving keys. Proving circuits are bundled with the CLI and need no separate download.
 
 ## Prefetch once
@@ -27,7 +29,7 @@ kohaku fetch-sync-cache --without-tor
 
 Use `--force` to download files again even if they already verify locally. Set `KOHAKU_SYNC_CACHE_BASE_URL` to use another snapshot host; the default is `https://artifacts.0000000000.org/sync-cache/v2`. Each file gets a five-minute download budget and three attempts.
 
-Older `<dataDir>/public-sync-cache` data from the v1 format is left on disk but is **not read** by v0.1.0. To remove both old and new caches:
+Older `<dataDir>/public-sync-cache` data from the v1 format is left on disk but is **not read** by v0.1.x. To remove both old and new caches:
 
 ```bash
 kohaku clear-tor-cache --public-sync

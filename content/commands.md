@@ -2,10 +2,10 @@
 title: Full Commands Reference
 order: 24
 section: appendix
-summary: Full command reference for kohaku-cli 0.1.0
+summary: Full command reference for kohaku-cli v0.1.x
 ---
 
-Synced with the [kohaku-cli README](https://github.com/kassandraoftroy/kohaku-cli) for **0.1.0**. Flags may still evolve — when in doubt, run `kohaku help` or `kohaku <command> --help`.
+For **v0.1.x**, based on the [kohaku-cli README](https://github.com/kassandraoftroy/kohaku-cli). Flags may still evolve — when in doubt, run `kohaku help` or `kohaku <command> --help`.
 
 ## Commands Summary
 
@@ -18,7 +18,7 @@ Synced with the [kohaku-cli README](https://github.com/kassandraoftroy/kohaku-cl
 | `init-profile` | Publish EIP-5564 stealth keys (and optionally a name); fully interactive with no args |
 | `export-private-key` | Print one account’s private key to stdout |
 | `reveal-seed-phrase` | Decrypt and print the wallet BIP-39 mnemonic |
-| `balances` | Public + private balances; stealth announcement scan (`--skip-stealth-scan`) |
+| `balances` | Public + private balances; recent private checks may be reused (`--refresh` to sync now); stealth announcement scan (`--skip-stealth-scan`) |
 | `activity` | View encrypted local history of CLI transaction submissions |
 | `transfer` | Send from a public account or use `--from tornado\|privacy-pools\|railgun` for a private transfer |
 | `transact-raw` | Submit raw calldata (multi-call → EIP-7702 UserOp) |
@@ -59,7 +59,7 @@ Global behavior:
 | **`--password <password>`** | Legacy wallet unlock input. A literal string or existing file path is accepted for compatibility; prefer `--password-file` in scripts. |
 | **`--without-tor`** | Disable Tor for non-RPC HTTP (default: Tor on for private-protocol and Pimlico-backed commands, including `transfer` / `transact-raw` / names). Or set `KOHAKU_WITHOUT_TOR=1`. Ethereum RPC stays clearnet. Review contacts with `view-network-traffic`. |
 | **Proving artifacts** | Railgun, Tornado, and Privacy Pools circuits install with the CLI through `kohaku-artifacts`. No separate fetch is needed; `fetch-artifacts` was removed in 0.0.10. |
-| **Public-sync cache** | `fetch-sync-cache` installs a verified mainnet snapshot under `<dataDir>/sync-cache-v2` for Railgun, historical PPOI leaves, Tornado, and Privacy Pools. Live sources cover newer state and PPOI checks. Sepolia keeps its existing sync path. Old `<dataDir>/public-sync-cache` data is not read. `clear-tor-cache --public-sync` removes both directories. |
+| **Public-sync cache** | `fetch-sync-cache` installs a verified mainnet snapshot under `<dataDir>/sync-cache-v2` for Railgun, historical PPOI leaves, Tornado, and Privacy Pools. Complete PPOI leaf pages and confirmed historical indexer responses fetched after that snapshot are reused across wallets from `sync-cache-v2/live` (up to 256 MiB). Heads, recent indexer state, incomplete PPOI pages and PPOI checks remain live. Sepolia keeps its existing sync path. Old `<dataDir>/public-sync-cache` data is not read. `clear-tor-cache --public-sync` removes both directories. |
 
 ---
 
@@ -215,6 +215,8 @@ Show aggregated **public** balances (ETH + default ERC-20s for the chain, plus a
 
 By default, private balances are included only for `DEFAULT_PRIVACY_PROTOCOL` (if set). Otherwise only public balances are shown, with a short warning. Pass `--include` to sync one or more protocols explicitly (required for multiple protocols at once, or for any private balance when the env is unset).
 
+Successful private balance checks can be reused for up to one minute from an encrypted wallet-local display cache. Cached sections show their age; JSON includes `private_balance_freshness`. Use `--refresh` to sync now. Changes to wallet identity, protocol storage, or operation activity invalidate cached views. Spending flows use their normal sync path. When every requested private view is recent, `balances` skips private wallet initialization and Tor bootstrap; public balances are still fetched. Independent private protocols sync concurrently when fresh checks are needed.
+
 `balances` always loads **already-imported** stealth accounts into public totals. It also scans ERC-5564 announcements for new payments (same spinner progress as protocol first-sync). A line of the form `Stealth scan from block {start} · {latest - start} blocks` prints before that progress bar. `--stealth-start-block` sets the history floor (and can back-date below the wallet file, down to the announcer deploy block); use `--skip-stealth-scan` to skip discovery for a faster run.
 
 | Option | Description |
@@ -224,6 +226,7 @@ By default, private balances are included only for `DEFAULT_PRIVACY_PROTOCOL` (i
 | `--rpc-url <url>` | RPC endpoint. |
 | `--include <protocols>` | Comma-separated private protocols to sync (`railgun`, `privacy-pools`, `tornado`). Default: `DEFAULT_PRIVACY_PROTOCOL` only, or none if unset. |
 | `--verbose` | Human: per-address public breakdown + private note list for included protocols. JSON: adds `public_account_indexes_by_address` and `private_notes`. |
+| `--refresh` | Bypass recent private balance checks and sync now. |
 | `--tokensList <addrs>` | Extra ERC-20 addresses (comma- or space-separated), merged with chain defaults. |
 | `--without-tor` | Disable Tor for privacy HTTP when syncing private protocols (default: Tor on). Covers Railgun Subsquid/PPOI, Tornado saga, Privacy Pools ASP, Pimlico, etc. RPC stays clearnet. Or set `KOHAKU_WITHOUT_TOR=1`. |
 | `--stealth-start-block <block>` | Floor for the ERC-5564 announcement **scan** (decimal or `0x`-hex); skips older history on first/full scan. Can back-date below the wallet `.stealth-start-block` (often the creation/import tip; as far as the announcer deploy block). When omitted, uses that file if present, otherwise the Kohaku import default (mainnet `25700000`, Sepolia `11455454`). Not a way to skip scanning. |
@@ -242,6 +245,7 @@ kohaku balances --wallet testWallet --include tornado
 kohaku balances --wallet testWallet --include railgun,tornado --verbose
 kohaku balances --wallet testWallet --verbose --include privacy-pools --tokensList 0xYourToken
 kohaku balances --wallet testWallet --include tornado --without-tor
+kohaku balances --wallet testWallet --include railgun,privacy-pools,tornado --refresh
 kohaku balances --wallet testWallet --skip-stealth-scan
 ```
 
@@ -368,9 +372,11 @@ Move funds from a **public** account into a private protocol.
 - **railgun** — ETH and ERC-20; non-ETH may need an approval. Approval + shield (2+ calls) are submitted as **one EIP-7702 UserOp** via Pimlico.
 - **tornado** — ETH and ERC-20 tokens in the installed SDK's static `TornadoInstances` catalog that also have SDK paymaster support (`src/utils/tornado-pools.ts` adapts it for the CLI; mainnet and Sepolia differ). Amount must be an exact multiple of the smallest pool denomination for that asset. Multi-denomination deposits (and any ERC-20 approvals) use **EIP-7702 UserOps with up to five deposit notes each**. Approvals are aggregated per pool (e.g. 2×1000 + 5×100 → approve 2000 and 500, not seven separate approves).
 
-Interactive Tornado shields always offer a note-packing choice. The first option uses the fewest notes; alternatives explicitly exclude denominations, prioritizing individual 3-style sizes before pairs and broader groups (for example exclude only 0.3, only 0.03, then both). Only distinct exact packings are offered, up to four choices, with the option to enter another amount. Each choice shows the note count, denominations used, and transaction count. Confirmation shows a multiline count-by-denomination breakdown, with blank lines separating the sender, full pool addresses, and transaction/fee details. It rounds displayed ETH fee estimates upward to six decimal places; JSON retains exact values. Non-interactive shields use the fewest-note exact packing. Repeat `--exclude-denomination <amount>` to exclude specific sizes in the selected token's normal units, for example `--exclude-denomination 3` for the 3 ETH pool. This combines with `--exclude-new-pools` and does not narrow sync or balances.
+Interactive Tornado shields always offer a note-packing choice. The first option uses the fewest notes; alternatives explicitly exclude denominations, prioritizing individual 3-style sizes before pairs and broader groups (for example exclude only 0.3, only 0.03, then both). Only distinct exact packings are offered, up to four choices, with the option to enter another amount. Each choice shows the note count, denominations used, and transaction count. Confirmation shows a multiline count-by-denomination breakdown, sender, and transaction/fee details without a pool contract address list. It rounds displayed ETH fee estimates upward to six decimal places; JSON retains exact values. Non-interactive shields use the fewest-note exact packing. Repeat `--exclude-denomination <amount>` to exclude specific sizes in the selected token's normal units, for example `--exclude-denomination 3` for the 3 ETH pool. This combines with `--exclude-new-pools` and does not narrow sync or balances.
 
 Tornado shields allow **five deposit notes per transaction**, automatically splitting larger plans into sequential EIP-7702 UserOps. Approvals do not count as notes and are included independently in each token batch. A single native-note shield still uses an EOA transaction. `--disallow-multiple-userops` errors before preparing commitments unless the entire packing fits in five notes. Five is a conservative CLI policy, not a protocol limit or a guarantee of simulation success. The CLI estimates every batch before confirming the full plan and combined fee; each send is prepared against current state after the previous transaction has been included successfully with one confirmation. Later estimation/submission/inclusion failures stop the sequence. A shield can complete partially: earlier deposits remain shielded, and the CLI reports their hashes, confirmed amount, and unconfirmed remainder with a nonzero exit status. Non-interactive output includes per-batch status and hashes. An unresolved receipt is labelled unknown; reconcile its saved hash before retrying and never repeat the original full amount blindly. Prepared commitments/calls and progress are saved encrypted in `<wallet>/shield-runs/<runId>.json`; no automatic replay or resume is performed. `--amount-max` must also cover the combined estimated batch fees; if its initial reserve is insufficient, the CLI stops before submitting and asks for a smaller explicit amount.
+
+Successful Tornado shields finish with Etherscan links for every submitted transaction and `✔ Shield flow completed.`; Sepolia links point to Sepolia Etherscan.
 
 When a shield needs more than one on-chain call, the CLI uses EIP-7702 Simple7702Account (`0xe6Cae83B…855B`) the same way as `transact-raw`.
 
@@ -699,6 +705,8 @@ kohaku set-name-reverse-record --wallet testWallet --name alice.eth --broadcast
 Download the mainnet public sync snapshot into `<dataDir>/sync-cache-v2`. It contains bounded Railgun Subsquid records, complete historical PPOI leaf pages, and frozen Tornado and Privacy Pools Saga history. A fresh wallet reads that history locally. Live Subsquid or RPC covers blocks after the snapshot; live PPOI handles Merkle-root validation, TXID status, proof submission, and the growing list tip. Sepolia keeps its existing sync path and does not use this snapshot.
 
 Each file is checked against its size and SHA-256 in the snapshot manifest. Public files live directly under `sync-cache/v2/saga/`, `sync-cache/v2/railgun/`, and `sync-cache/v2/ppoi/`; verified downloads are stored by hash under `<dataDir>/sync-cache-v2/objects/`. An interrupted download can be resumed; the CLI activates a snapshot only when every file is present and verified. The previous active v2 snapshot remains usable while a new one downloads. Older `<dataDir>/public-sync-cache` files are not read by this version.
+
+Live mainnet sync also retains complete PPOI leaf pages and confirmed historical indexer ranges in `sync-cache-v2/live`, shared across wallets and capped at 256 MiB. Heads, recent indexer state, incomplete PPOI pages, PPOI root validation, status, and submissions remain live. Existing v2 snapshots remain compatible; there is no need to fetch a new one just for this cache change.
 
 | Option | Description |
 |--------|-------------|
