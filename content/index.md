@@ -48,4 +48,4 @@ Already have a wallet from before 0.1.0? Read [Upgrading to 0.1.0](./upgrading-t
 - [Managing Ethereum Names](./managing-names.html) — renew, transfer, text records, website
 - [Fetch Sync Cache](./fetch-sync-cache.html) — prefetch Tornado/Railgun sync history
 - [Network Traffic](./network-traffic.html) — Tor vs clearnet, and how to audit contacts
-- [Full Commands Reference](./commands.html) — full command reference (0.1.0)
+- [Full Commands Reference](./commands.html) — full command reference (v0.1.x)

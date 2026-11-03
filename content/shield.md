@@ -53,9 +53,11 @@ Tornado uses **fixed denomination notes**. ETH pools include **0.01, 0.03, 0.1, 
 
 **The new denominations may have much smaller anonymity sets than the classic pools.** Check the pool selection in the shield preview before broadcasting. A smaller note is not automatically a more private note.
 
-Interactive shields offer note packings and show the denominations, note count, and transaction count. Repeat `--exclude-denomination <amount>` to avoid a specific pool size; for example, `--exclude-denomination 0.03`. The confirmation lists the destination pools.
+Interactive shields offer note packings and show the denominations, note count, and transaction count. Repeat `--exclude-denomination <amount>` to avoid a specific pool size; for example, `--exclude-denomination 0.03`. The confirmation shows a breakdown by denomination and the estimated fees, without listing pool contract addresses.
 
 The CLI puts at most **five deposit notes per transaction** (approval calls do not count). Larger shields split into sequential transactions by default. If a later transaction fails, earlier deposits may already be shielded; check the reported hashes and amounts before retrying. Use `--disallow-multiple-userops` to reject a plan that needs more than one transaction.
+
+After a successful Tornado shield, the CLI prints an Etherscan link for each transaction and `✔ Shield flow completed.` Sepolia transactions link to Sepolia Etherscan.
 
 New Tornado and Privacy Pools deposits use signature-derived note secrets. Older notes remain in your wallet and can still be spent.
 

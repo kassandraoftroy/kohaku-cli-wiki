@@ -12,7 +12,15 @@ You will pick your wallet (if you have more than one), enter the password, and w
 
 The **first** private sync can take a while. On mainnet, prefetch Railgun, Tornado, and Privacy Pools history with [`fetch-sync-cache`](./fetch-sync-cache.html) so most historical work comes from disk; live state still catches up afterward. Sepolia keeps its existing sync path.
 
-Sync progress now shows a separate bar for each step whose size is known (saga chunks, RPC windows, and stealth blocks). A quiet stretch can still say it is working while the elapsed time keeps moving. The Sepolia Privacy Pools bundled snapshot was updated in v0.0.11, so first sync starts from a later block.
+Independent private protocols sync concurrently. Progress shows the current phases and bars for work whose size is known (such as saga chunks, RPC windows, and cached PPOI leaves); remaining-time estimates count down as work proceeds. A quiet stretch can still say it is working. The Sepolia Privacy Pools bundled snapshot was updated in v0.0.11, so first sync starts from a later block.
+
+Successful private balance checks are saved in an encrypted wallet-local display cache for up to one minute. Cached sections show how long ago they were checked; non-interactive JSON includes `private_balance_freshness`. To check private balances again now, run:
+
+```bash
+kohaku balances --include railgun,privacy-pools,tornado --refresh
+```
+
+Changes to wallet identity, protocol storage, or operation activity invalidate cached views. Spending commands always use their normal sync path. Public balances are still fetched on every `balances` run; when every requested private view is recent, the CLI skips private wallet initialization and Tor bootstrap.
 
 You should see:
 

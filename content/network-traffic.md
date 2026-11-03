@@ -27,7 +27,7 @@ First Tor bootstrap may take a few seconds. Set `KOHAKU_TOR_DEBUG=1` if you need
 
 ## Public-sync cache
 
-On mainnet, [`fetch-sync-cache`](./fetch-sync-cache.html) installs verified Railgun history, historical PPOI leaves, and Tornado / Privacy Pools Saga data under `<dataDir>/sync-cache-v2`. Later blocks and PPOI root/status/tip checks still use live sources (Tor by default). Sepolia keeps its existing live sync path.
+On mainnet, [`fetch-sync-cache`](./fetch-sync-cache.html) installs verified Railgun history, historical PPOI leaves, and Tornado / Privacy Pools Saga data under `<dataDir>/sync-cache-v2`. Complete PPOI leaf pages and confirmed historical Railgun indexer responses fetched afterward can be reused across wallets from `sync-cache-v2/live`, up to 256 MiB. Heads, recent indexer state, incomplete PPOI pages, and PPOI root/status/tip checks still use live sources (Tor by default). Sepolia keeps its existing live sync path.
 
 The old `<dataDir>/public-sync-cache` is no longer read. `kohaku clear-tor-cache --public-sync` removes both cache directories.
 
