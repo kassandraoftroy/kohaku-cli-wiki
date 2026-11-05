@@ -57,7 +57,7 @@ export PATH="$HOME/.local/bin:$PATH"
 
 ## Update
 
-Note that to update the CLI you need to sync with latest `main` branch of the repository and and repeat `npm run build`. That should update your cli (check with `kohaku --version`)
+To update the CLI, sync with the latest `main` branch of the repository, then run `npm install` and `npm run build`. This installs any updated packages and rebuilds the CLI. Check the result with `kohaku --version`.
 
 If your wallet predates v0.1.0, read [Upgrading to 0.1.0](./upgrading-to-0.1.0.html) before your first private sync.
 
