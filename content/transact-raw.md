@@ -27,6 +27,8 @@ kohaku transact-raw --from 0xYourAddress \
   --broadcast
 ```
 
+For an external `--from` address, an interactive broadcast prompts for its private key with hidden input. A non-interactive broadcast requires `--sender-priv <key>`. The key must match `--from` and is not saved. Unsaved HD indexes from the wallet seed are derived automatically.
+
 Optional ETH with the call:
 
 ```bash

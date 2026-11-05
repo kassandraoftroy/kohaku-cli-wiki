@@ -29,7 +29,7 @@ kohaku fetch-sync-cache --without-tor
 
 Use `--force` to download files again even if they already verify locally. Set `KOHAKU_SYNC_CACHE_BASE_URL` to use another snapshot host; the default is `https://artifacts.0000000000.org/sync-cache/v2`. Each file gets a five-minute download budget and three attempts.
 
-Older `<dataDir>/public-sync-cache` data from the v1 format is left on disk but is **not read** by v0.1.x. To remove both old and new caches:
+Older `<dataDir>/public-sync-cache` data from the v1 format is left on disk but is **not read** by v0.1.5+. To remove both old and new caches:
 
 ```bash
 kohaku clear-tor-cache --public-sync

@@ -41,7 +41,7 @@ Then check:
 kohaku --version
 ```
 
-should output a version in the **v0.1.x** series (for this guide)
+should output **0.1.5 or later** (v0.1.5+ for this guide)
 
 Writing `kohaku` file to any directory on your PATH works. E.g. You could also write kohaku binary to `~/.local/bin` with:
 

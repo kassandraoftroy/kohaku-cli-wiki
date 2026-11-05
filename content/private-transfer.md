@@ -41,7 +41,13 @@ kohaku private-transfer --to 0xFriend --token DAI --amount-formatted 50 --broadc
 - **Railgun** — same “exact transfer” idea; treasury fee is added on top, and bundler gas is paid from shielded WETH.
 - **Railgun to `0zk…`** — stays private inside Railgun, without an unshield or public receiving account. `eth` selects private WETH. The ERC-4337 paymaster still charges private WETH for gas.
 
-There is no `--next`, `--tail-calls`, or `--amount-max` on this command — use [`unshield`](./unshield.html) with [`--tail-calls`](./tail-calls.html) when you need custom calldata (swaps, routers, multi-call).
+Use `--amount-max` (or enter `max` interactively) to send the largest recipient amount after estimated protocol and gas fees:
+
+```bash
+kohaku private-transfer --protocol railgun --to 0xFriend --amount-max
+```
+
+Legacy and signature-derived notes remain separate when calculating the maximum. Railgun also reserves private WETH for gas, including transfers to a Railgun `0zk…` address. Use [`unshield`](./unshield.html) with [`--tail-calls`](./tail-calls.html) when you need custom calldata (swaps, routers, multi-call); `private-transfer` has no `--next` or `--tail-calls`.
 
 ## Related
 

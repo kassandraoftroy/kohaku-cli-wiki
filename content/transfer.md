@@ -15,7 +15,7 @@ kohaku transfer --from tornado --to 0xRecipient --amount-formatted 0.4
 kohaku transfer --from tornado --to 0xRecipient --amount-formatted 0.4 --broadcast
 ```
 
-The amount is what the recipient receives; the CLI handles the private withdrawal and fee. `--exclude-new-pools` also works with `--from tornado`. `--amount-max`, `--from-priv`, and `--stealth` are for public senders only. A Railgun `--to 0zk…` recipient receives a private transfer inside Railgun without unshielding.
+The amount is what the recipient receives; the CLI handles the private withdrawal and fee. `--exclude-new-pools` also works with `--from tornado`. `--amount-max` works with public and private senders; for private transfers it reserves protocol and gas fees. `--sender-priv <key>` and `--stealth` are for public senders only. A Railgun `--to 0zk…` recipient receives a private transfer inside Railgun without unshielding.
 
 ## Simple transfers
 
@@ -31,6 +31,8 @@ Then broadcast when it looks right:
 kohaku transfer --from 0xYourAddress --to 0xRecipient --amount-formatted 0.05 --broadcast
 ```
 
+If `--from` is an address outside this wallet, an interactive broadcast asks for its private key with hidden input. A non-interactive broadcast requires `--sender-priv <key>`. The key must match `--from` and is not saved. An unsaved HD index from the wallet seed is derived automatically.
+
 ERC-20s (example: USDC):
 
 ```bash
@@ -39,12 +41,14 @@ kohaku transfer --from 0xYourAddress --to 0xRecipient --token USDC --amount-form
 
 ## Send the full balance
 
-`--amount-max` is for public senders: it means “send whatever this address currently holds of that asset” — the full ERC-20 balance, or for ETH the full balance minus what must be reserved for gas:
+For a public sender, `--amount-max` means “send whatever this address currently holds of that asset” — the full ERC-20 balance, or for ETH the full balance minus what must be reserved for gas:
 
 ```bash
 kohaku transfer --from 0xYourAddress --to 0xRecipient --token USDC --amount-max --broadcast
 kohaku transfer --from 0xYourAddress --to 0xRecipient --amount-max --broadcast
 ```
+
+For a private sender, use `--from tornado`, `--from privacy-pools`, or `--from railgun` with `--amount-max` to send the largest recipient amount after estimated fees. You can also enter `max` interactively.
 
 ## Stealth transfers (by name)
 

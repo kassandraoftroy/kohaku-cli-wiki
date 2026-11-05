@@ -13,7 +13,7 @@ Find the note's label with `kohaku balances --include privacy-pools --verbose`, 
 kohaku ragequit --wallet myWallet --label NOTE_LABEL
 ```
 
-Review the simulation, then add `--broadcast` to submit. The sender defaults to the note's depositor. If needed, select the original depositor with `--from 0`, `--from s0`, or `--from 0xYourAddress`; `--from-priv` lets the CLI derive an unsaved HD index. Older BIP-32 notes need `--scheme legacy` (the default is `signature`).
+Review the simulation, then add `--broadcast` to submit. The sender defaults to the note's depositor. If needed, select the original depositor with `--from 0`, `--from s0`, or `--from 0xYourAddress`. For an external depositor, an interactive broadcast prompts for the private key with hidden input; a non-interactive broadcast requires `--sender-priv <key>`. The key must match `--from` and is not saved. Unsaved HD indexes are derived from the wallet seed automatically. Older BIP-32 notes need `--scheme legacy` (the default is `signature`).
 
 **Ragequit reveals the link to the deposit.** Approved notes should use [`unshield`](./unshield.html) instead. A shield transaction that reverted and never created a deposit has no note to ragequit.
 

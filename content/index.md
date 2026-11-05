@@ -6,6 +6,8 @@ summary: Practical guide to kohaku-cli
 
 Welcome! This is a practical user guide for **kohaku-cli**
 
+This guide covers **v0.1.5+**.
+
 Find the [github repository here](https://github.com/kassandraoftroy/kohaku-cli)
 
 ## What is kohaku-cli?
@@ -48,4 +50,4 @@ Already have a wallet from before 0.1.0? Read [Upgrading to 0.1.0](./upgrading-t
 - [Managing Ethereum Names](./managing-names.html) — renew, transfer, text records, website
 - [Fetch Sync Cache](./fetch-sync-cache.html) — prefetch Tornado/Railgun sync history
 - [Network Traffic](./network-traffic.html) — Tor vs clearnet, and how to audit contacts
-- [Full Commands Reference](./commands.html) — full command reference (v0.1.x)
+- [Full Commands Reference](./commands.html) — full command reference (v0.1.5+)

@@ -22,6 +22,14 @@ Interactive mode lets you pick the public account that holds the funds. When it 
 kohaku shield --protocol tornado --amount-formatted 1.0 --broadcast
 ```
 
+You can also shield from an address outside this wallet. Select it with `--from 0xYourAddress`; on an interactive broadcast, the CLI asks for its private key with hidden input. For a non-interactive broadcast, pass `--sender-priv <key>` as well. The key must match `--from` and is not saved. An unsaved HD index from this wallet's seed needs no separate key; the CLI derives it automatically. Dry runs do not need the sender key.
+
+Prefer the hidden interactive prompt when possible: putting a key directly on a command line can expose it through shell history or process listings.
+
+```bash
+kohaku shield --protocol tornado --from 0xYourAddress --amount-formatted 0.1 --broadcast
+```
+
 For ERC20s, pass the token:
 
 ```bash
@@ -60,6 +68,8 @@ The CLI puts at most **five deposit notes per transaction** (approval calls do n
 After a successful Tornado shield, the CLI prints an Etherscan link for each transaction and `✔ Shield flow completed.` Sepolia transactions link to Sepolia Etherscan.
 
 New Tornado and Privacy Pools deposits use signature-derived note secrets. Older notes remain in your wallet and can still be spent.
+
+Before preparing new Tornado or Privacy Pools notes, the CLI refreshes complete protocol history and checks note indexes across pools and assets, including spent deposits. Tornado notes in one shield plan get distinct nonces even when they use different denominations or transactions. If that history cannot be verified through the sampled chain head, preparation stops. A pending external deposit can still race with a separately prepared shield.
 
 Shield **as much as fits** into valid notes from the fresh address. Leave leftovers alone for now — see [Dust Management](./dust.html).
 

@@ -41,6 +41,8 @@ kohaku balances --include privacy-pools,tornado
 
 `kohaku balances --include railgun` also shows your full Railgun `0zk` address. Non-interactive JSON includes it as `railgun_address`.
 
+If Railgun history sync succeeds but its POI refresh fails, the balance remains visible with `[ERR: POI data missing]`; affected funds cannot be spent until POI refresh succeeds. JSON records the error under `private_balance_freshness.railgun.poiError`.
+
 ## Reading the result
 
 - Fresh deposits show up under **Public** until you shield them

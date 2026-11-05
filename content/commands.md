@@ -2,10 +2,10 @@
 title: Full Commands Reference
 order: 24
 section: appendix
-summary: Full command reference for kohaku-cli v0.1.x
+summary: Full command reference for kohaku-cli v0.1.5+
 ---
 
-For **v0.1.x**, based on the [kohaku-cli README](https://github.com/kassandraoftroy/kohaku-cli). Flags may still evolve — when in doubt, run `kohaku help` or `kohaku <command> --help`.
+For **v0.1.5+**, based on the [kohaku-cli README](https://github.com/kassandraoftroy/kohaku-cli). Flags may still evolve — when in doubt, run `kohaku help` or `kohaku <command> --help`.
 
 ## Commands Summary
 
@@ -24,7 +24,7 @@ For **v0.1.x**, based on the [kohaku-cli README](https://github.com/kassandraoft
 | `transact-raw` | Submit raw calldata (multi-call → EIP-7702 UserOp) |
 | `shield` | Deposit from a public account into a privacy protocol |
 | `unshield` | Withdraw private balance (`--next`, `--to s0`, `--tail-calls` on Tornado + Privacy Pools + Railgun) |
-| `private-transfer` | Pay exact amount to a public recipient or privately to a Railgun `0zk` address |
+| `private-transfer` | Pay an exact or maximum amount to a public recipient or privately to a Railgun `0zk` address |
 | `ragequit` | Exit one unapproved Privacy Pools note to its original depositor |
 | `import-tornado-note` | Import legacy Tornado note string(s) |
 | `export-tornado-note` | Export unspent Tornado note secret(s) |
@@ -278,13 +278,13 @@ Transfer ETH or ERC-20 tokens from one wallet public account to any public addre
 | `--wallet <name>` | Wallet. |
 | `--password <password>` | Unlock password. |
 | `--from <address-or-index\|protocol>` | Public account address, HD index, stealth selector (`s0`), or private protocol (`railgun`, `tornado`, `privacy-pools`). |
-| `--from-priv` | With `--broadcast`, derive an indexed sender from the mnemonic if it is not in the stored public account list. |
+| `--sender-priv <key>` | Public transfer only: sign for an external sender. The key must match `--from` and is not saved. Interactive broadcasts prompt with hidden input if needed; non-interactive broadcasts require this option. Unsaved HD indexes are derived automatically. |
 | `--to <address>` | Recipient address, Railgun `0zk` address, name, or stealth meta-address. |
 | `--stealth` | Public transfer only: resolve a scheme-1 stealth meta-address from `--to` and send via EIP-5564. |
 | `--token <address\|symbol\|eth>` | Token address or symbol (default: `eth`). |
 | `--amount-wei <n>` | Amount in base units. |
 | `--amount-formatted <decimal>` | Human-readable amount using token decimals. |
-| `--amount-max` | Public transfer only: send the full ERC-20 balance, or the maximum ETH balance after reserving estimated gas. |
+| `--amount-max` | Send the maximum recipient amount after estimated fees. Public ERC-20 transfers send the full token balance; public ETH transfers reserve gas. Private protocol transfers reserve protocol and gas fees. |
 | `--exclude-new-pools` | With `--from tornado` only, use classic Tornado pools. |
 | `--rpc-url <url>` | RPC endpoint. |
 | `--broadcast` | Sign and submit. Omit to print a public transaction payload or prepared private operation. |
@@ -292,7 +292,7 @@ Transfer ETH or ERC-20 tokens from one wallet public account to any public addre
 | `--non-interactive` | JSON output; requires `--wallet`, `--password`, `--from`, `--to`, and one amount flag. |
 | `--dataDir <path>` | Data root. |
 
-Provide at most one of `--amount-wei`, `--amount-formatted`, or `--amount-max`. In interactive mode, omitted sender, recipient, and amount values are prompted. Private protocol sources accept the same options as `private-transfer`; `--from-priv`, `--stealth`, and `--amount-max` are public-transfer-only.
+Provide at most one of `--amount-wei`, `--amount-formatted`, or `--amount-max`. In interactive mode, omitted sender, recipient, and amount values are prompted; `max` works with public and private sources. Private protocol sources accept the same options as `private-transfer`; `--sender-priv <key>` and `--stealth` are public-transfer-only.
 
 **Examples:**
 
@@ -320,7 +320,7 @@ Simulate or submit one or more raw contract calls from a public account.
 | `--wallet <name>` | Wallet. |
 | `--password <password>` | Unlock password. |
 | `--from <address-or-index>` | Sender public account address or HD index. |
-| `--from-priv` | With `--broadcast`, derive an indexed sender from the mnemonic if it is not in the stored public account list. |
+| `--sender-priv <key>` | Sign for an external sender. The key must match `--from` and is not saved. Interactive broadcasts prompt with hidden input if needed; non-interactive broadcasts require this option. Unsaved HD indexes are derived automatically. |
 | `--rpc-url <url>` | RPC endpoint. |
 | `--broadcast` | Sign and submit on-chain (single EOA tx, or one batched UserOp for 2+ calls). Omit to simulate and print payloads. |
 | `--without-tor` | Disable Tor for non-RPC HTTP (Pimlico UserOps, etc.). RPC stays clearnet. Or set `KOHAKU_WITHOUT_TOR=1`. |
@@ -348,7 +348,7 @@ Move funds from a **public** account into a private protocol.
 | `--wallet <name>` | Wallet. |
 | `--password <password>` | Unlock password. |
 | `--from <address-or-index>` | Sender public account address, HD index, or stealth selector (`s0`). |
-| `--from-priv` | With `--broadcast`: derive private key by index from mnemonic if account not yet in stored public list. |
+| `--sender-priv <key>` | Sign for an external sender. The key must match `--from` and is not saved. Interactive broadcasts prompt with hidden input if needed; non-interactive broadcasts require this option. Unsaved HD indexes are derived automatically. |
 | `--token <address\|symbol\|eth>` | Token (default: `eth`). |
 | `--amount-wei <n>` | Amount in base units. |
 | `--amount-formatted <decimal>` | Human amount (uses token decimals). |
@@ -364,7 +364,7 @@ Move funds from a **public** account into a private protocol.
 | `--non-interactive` | JSON output; requires `--wallet`, `--password`, `--from`, and an amount flag (`--amount-wei`, `--amount-formatted`, or `--amount-max`). |
 | `--dataDir <path>` | Data root. |
 
-**Interactive (no amount / from flags):** lists public accounts with balances for the token → amount prompt (or `max`) → account picker → dry-run JSON or confirmations with `--broadcast`. `--amount-max` skips the amount prompt and picks the account first.
+**Interactive (no amount / from flags):** shows the selected sender and balance before the amount prompt (or `max`) → dry-run JSON or confirmations with `--broadcast`. `--amount-max` picks the sender before calculating the maximum.
 
 **Protocols:**
 
@@ -373,6 +373,8 @@ Move funds from a **public** account into a private protocol.
 - **tornado** — ETH and ERC-20 tokens in the installed SDK's static `TornadoInstances` catalog that also have SDK paymaster support (`src/utils/tornado-pools.ts` adapts it for the CLI; mainnet and Sepolia differ). Amount must be an exact multiple of the smallest pool denomination for that asset. Multi-denomination deposits (and any ERC-20 approvals) use **EIP-7702 UserOps with up to five deposit notes each**. Approvals are aggregated per pool (e.g. 2×1000 + 5×100 → approve 2000 and 500, not seven separate approves).
 
 Interactive Tornado shields always offer a note-packing choice. The first option uses the fewest notes; alternatives explicitly exclude denominations, prioritizing individual 3-style sizes before pairs and broader groups (for example exclude only 0.3, only 0.03, then both). Only distinct exact packings are offered, up to four choices, with the option to enter another amount. Each choice shows the note count, denominations used, and transaction count. Confirmation shows a multiline count-by-denomination breakdown, sender, and transaction/fee details without a pool contract address list. It rounds displayed ETH fee estimates upward to six decimal places; JSON retains exact values. Non-interactive shields use the fewest-note exact packing. Repeat `--exclude-denomination <amount>` to exclude specific sizes in the selected token's normal units, for example `--exclude-denomination 3` for the 3 ETH pool. This combines with `--exclude-new-pools` and does not narrow sync or balances.
+
+Tornado signature nonces and Privacy Pools deposit indexes each span all pools and assets on the selected chain, with separate sequences for the two protocols. Shield preparation refreshes complete protocol history and checks proposed indexes against deposits and spent nullifiers, including notes submitted outside the CLI. Every note in a Tornado packing gets a distinct nonce, across denominations and batches. If history cannot be verified through the sampled chain head, preparation stops. Pending external deposits can still race with a separately prepared shield.
 
 Tornado shields allow **five deposit notes per transaction**, automatically splitting larger plans into sequential EIP-7702 UserOps. Approvals do not count as notes and are included independently in each token batch. A single native-note shield still uses an EOA transaction. `--disallow-multiple-userops` errors before preparing commitments unless the entire packing fits in five notes. Five is a conservative CLI policy, not a protocol limit or a guarantee of simulation success. The CLI estimates every batch before confirming the full plan and combined fee; each send is prepared against current state after the previous transaction has been included successfully with one confirmation. Later estimation/submission/inclusion failures stop the sequence. A shield can complete partially: earlier deposits remain shielded, and the CLI reports their hashes, confirmed amount, and unconfirmed remainder with a nonzero exit status. Non-interactive output includes per-batch status and hashes. An unresolved receipt is labelled unknown; reconcile its saved hash before retrying and never repeat the original full amount blindly. Prepared commitments/calls and progress are saved encrypted in `<wallet>/shield-runs/<runId>.json`; no automatic replay or resume is performed. `--amount-max` must also cover the combined estimated batch fees; if its initial reserve is insufficient, the CLI stops before submitting and asks for a smaller explicit amount.
 
@@ -458,13 +460,14 @@ Send an **exact** private amount to someone else. For a public recipient, this u
 | `--exclude-new-pools` | Tornado only: use classic pools. |
 | `--amount-wei <n>` | Exact amount the recipient receives, in base units. |
 | `--amount-formatted <decimal>` | Exact amount the recipient receives. |
+| `--amount-max` | Maximum recipient amount after estimated protocol and gas fees. |
 | `--rpc-url <url>` | RPC endpoint. |
 | `--broadcast` | Submit via the protocol bundler or paymaster. **Omit** to print the prepared private operation. |
 | `--without-tor` | Disable Tor for non-RPC HTTP. |
-| `--non-interactive` | JSON; requires `--wallet`, `--password` or `--password-file`, `--to`, and `--amount-wei` or `--amount-formatted`. |
+| `--non-interactive` | JSON; requires `--wallet`, `--password` or `--password-file`, `--to`, and one of `--amount-wei`, `--amount-formatted`, or `--amount-max`. |
 | `--dataDir <path>` | Data root. |
 
-There is no `--next`, `--tail-calls`, or `--amount-max`. For public recipients, the fresh account is persisted only after a successful `--broadcast`. Railgun internal transfers use a fresh wallet-owned 4337 executor, persisted after broadcast, but do not create a fresh receiving account or unshield funds to it.
+Use `--amount-max` (or enter `max` interactively) to send the available amount after estimated fees. Legacy and signature-derived notes stay separate; Railgun also reserves private WETH for gas. There is no `--next` or `--tail-calls`. For public recipients, the fresh account is persisted only after a successful `--broadcast`. Railgun internal transfers use a fresh wallet-owned 4337 executor, persisted after broadcast, but do not create a fresh receiving account or unshield funds to it.
 
 `transfer --from railgun`, `transfer --from tornado`, and `transfer --from privacy-pools` are aliases for this command with the corresponding `--protocol` value.
 
@@ -495,7 +498,7 @@ Return the full remaining balance of **one unapproved Privacy Pools note** to it
 | `--label <label>` | Required note label, decimal or hex. |
 | `--scheme <signature\|legacy>` | Note derivation scheme (default: `signature`). |
 | `--from <address-or-index>` | Original depositor; defaults to the note depositor. Supports saved address, HD index, or stealth selector. |
-| `--from-priv` | Derive an unsaved HD `--from` index from the seed. |
+| `--sender-priv <key>` | Sign for an external original depositor. The key must match `--from` and is not saved. Interactive broadcasts prompt with hidden input if needed; non-interactive broadcasts require this option. Unsaved HD indexes are derived automatically. |
 | `--wallet <name>` | Wallet. |
 | `--password <password>` / `--password-file <path>` | Unlock password. |
 | `--rpc-url <url>` | RPC endpoint. |
